@@ -1,6 +1,6 @@
 {
     "name": "aimingpro-client",
-    "version": "0.0.1",
+    "version": "v0.0.2",
     "description": "The official experimental aiming.pro client",
     "main": "dist/main.js",
     "scripts": {
@@ -11,7 +11,8 @@
         "start": "npm run build && electron ./dist/main.js --dev",
         "start-nondev": "npm run build && electron ./dist/main.js",
         "pack": "npm run build && electron-builder --dir",
-        "dist": "npm run build && electron-builder"
+        "dist": "npm run build && electron-builder",
+        "publish": "npm run build && electron-builder -p 'onTagOrDraft'"
     },
     "keywords": [],
     "author": "Insigh Aiming Ltd.",
@@ -27,6 +28,7 @@
     "dependencies": {
         "discord-rpc": "^3.1.4",
         "electron-debug": "^3.1.0",
+        "electron-is-dev": "^1.2.0",
         "electron-store": "^6.0.1",
         "electron-updater": "^4.3.5",
         "v8-compile-cache": "^2.2.0"
@@ -53,6 +55,9 @@
         "win": {
             "target": [
                 "nsis"
+            ],
+            "publish": [
+                "github"
             ]
         },
         "linux": {
