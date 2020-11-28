@@ -2,7 +2,7 @@ import { app, ipcMain, clipboard } from "electron";
 import { autoUpdater } from "electron-updater";
 import { SplashWindow, GameWindow, SettingsWindow } from "./controllers";
 import { Settings, DiscordRPC } from "./services";
-import { constant, protocolHandler, cliSwitchHandler } from "./utils";
+import { constant, protocolHandler, cliSwitchHandler, Updater } from "./utils";
 import "v8-compile-cache";
 
 import electronDebug = require("electron-debug");
@@ -12,6 +12,7 @@ if (isDev) electronDebug();
 
 const settings = Settings.getInstance();
 const discordRPC = DiscordRPC.getInstance();
+const updater = new Updater();
 /* set command line switches (mostly optimizations) */
 cliSwitchHandler(settings.getSettings());
 
@@ -30,10 +31,13 @@ const windows: {
 app.on("ready", () => {
     /* initialize splash window */
     windows.splash = new SplashWindow();
+    if(isDev) {
+        ipcMain.emit('preload-finished');
+    } else{
+        updater.check();
+    }
     /* Set windows to use aimingpro as default protocol */
     app.setAsDefaultProtocolClient(constant.PROTOCOL_PREFIX);
-    // call the updater
-    //updater();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -42,13 +46,6 @@ app.on("ready", () => {
 app.on("window-all-closed", () => {
     discordRPC.clear();
     app.quit();
-});
-
-/* Auto Updater */
-
-ipcMain.on("ready-for-update", () => {
-    // Only use the updater if not currently in debug mode
-    //if (!isDev) autoUpdater.checkForUpdates();
 });
 
 /* prevent second instance of app from running */
@@ -86,7 +83,7 @@ ipcMain.on("open-settings", () => {
 });
 
 /* once all elements in splash screen are loaded open game screen and close splash screen */
-ipcMain.on("preload-finished", () => {
+ipcMain.once("preload-finished", () => {
     /* once preload is done */
     if(!windows.game) windows.game = new GameWindow();
     const prot = protocolHandler(process.argv);
@@ -137,44 +134,6 @@ ipcMain.on("copygpuinfo", () => {
         clipboard.writeText(JSON.stringify(e, null, 1));
     });
 });
-
-/*
-autoUpdater.on("checking-for-update", (info) =>
-    ipcMain.emit("update", "checking", info)
-);
-
-autoUpdater.on("error", (e) => {
-    ipcMain.emit("update", "error", e);
-    // Make sure the app still loads if an error occurs
-    ipcMain.emit("preload-finished");
-    //app.quit();
-});
-
-autoUpdater.on("download-progress", (e) =>
-    ipcMain.emit("update", "download-progress", e)
-);
-
-autoUpdater.on("update-available", (e) =>
-    ipcMain.emit("update", "update-available", e)
-);
-
-autoUpdater.on("update-not-available", (info) => {
-    ipcMain.emit("update", "update-not-available", info);
-
-    // Open game window if no update available
-    ipcMain.emit("preload-finished");
-});
-
-autoUpdater.on("update-downloaded", (info) => {
-    ipcMain.emit("update", "update-downloaded", info);
-    setTimeout(() => autoUpdater.quitAndInstall(), 2500);
-});
-
-// log all update events DEBUG
-ipcMain.on("update", (...args) => {
-    console.log(args);
-});
-*/
 
 /* Testing purposes
     const vendorId : number = (e as any).gpuDevice[0].vendorId;

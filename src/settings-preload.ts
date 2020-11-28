@@ -15,8 +15,3 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${type}-version`, (process.versions as any)[type]);
   }
 }, false);
-
-window.addEventListener('get-settings', (e) => {
-    const settings = Settings.getInstance().getSettings() as any;
-    dispatchEvent(new CustomEvent('return-settings', settings));
-});

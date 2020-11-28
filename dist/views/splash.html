@@ -41,14 +41,5 @@
             <img draggable="false" src="assets/out.gif" width="200px">
             <h4 id="loading-description">Loading assets...</h4>
         </div>
-
-        <!-- simulate minimum waiting time -->
-        <script>
-            const { ipcRenderer } = require('electron');
-            
-            setTimeout(() => {
-                ipcRenderer.send('preload-finished')
-            }, 1000)
-        </script>
     </body>
 </html>

@@ -1,8 +1,8 @@
 import { ipcRenderer } from 'electron';
-import { Settings } from './services';
+import { autoUpdater } from 'electron-updater';
 
 const updateLoadingDescription = (d : string) => {
-    document.querySelector("loading-description").textContent = d;
+    document.querySelector("#loading-description").textContent = d;
 }
 
 // All of the Node.js APIs are available in the preload process.
@@ -19,8 +19,8 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${type}-version`, (process.versions as any)[type]);
   }
 
-  ipcRenderer.on('update', (e, action, description) => {
-    updateLoadingDescription(action + " | " + description);
+  ipcRenderer.on('update-status', (e, status : string) => {
+    updateLoadingDescription(status);
   })
 
 }, false);
