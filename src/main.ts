@@ -1,20 +1,20 @@
 import { app, ipcMain, clipboard } from "electron";
-import { autoUpdater } from "electron-updater";
 import { SplashWindow, GameWindow, SettingsWindow } from "./controllers";
 import { Settings, DiscordRPC } from "./services";
-import { constant, protocolHandler, cliSwitchHandler, Updater } from "./utils";
+import { constant, protocolHandler, cliSwitchHandler, Updater, PreloadQueue } from "./utils";
 import "v8-compile-cache";
 
 import electronDebug = require("electron-debug");
 import * as isDev from "electron-is-dev";
-
 if (isDev) electronDebug();
 
 const settings = Settings.getInstance();
-const discordRPC = DiscordRPC.getInstance();
-const updater = new Updater();
 /* set command line switches (mostly optimizations) */
 cliSwitchHandler(settings.getSettings());
+
+/* Instantiate the DiscordRPC and the Updater */
+const discordRPC = DiscordRPC.getInstance();
+const updater = new Updater();
 
 const windows: {
     game: GameWindow;
@@ -29,26 +29,23 @@ const windows: {
 /* APP INITIALIZATION
  */
 app.on("ready", () => {
-    /* initialize splash window */
+    // This emits 'preload-finished' when all given events have fired on ipcMain which starts the GameWindows
+    PreloadQueue.start(['update-finished', 'minimum-waiting-time']);
+
+    // Simulate 1500ms waiting time
+    setTimeout(() => ipcMain.emit('minimum-waiting-time'), 1500);
+
+    // initialize splash window
     windows.splash = new SplashWindow();
-    if(isDev) {
-        ipcMain.emit('preload-finished');
-    } else{
-        updater.check();
-    }
-    /* Set windows to use aimingpro as default protocol */
+
+    // Check for updates
+    updater.check();
+
+    // Set windows to use aimingpro as default protocol
     app.setAsDefaultProtocolClient(constant.PROTOCOL_PREFIX);
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on("window-all-closed", () => {
-    discordRPC.clear();
-    app.quit();
-});
-
-/* prevent second instance of app from running */
+// prevent second instance of app from running
 const gotTheLock: boolean = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     app.quit();
@@ -58,8 +55,7 @@ if (!gotTheLock) {
         // Someone tried to run a second instance, we should focus our window.
         if (windows.game) {
             // Focus on main window if second instance is attempted
-            if (windows.game.browserWindow.isMinimized())
-                windows.game.browserWindow.restore();
+            if (windows.game.browserWindow.isMinimized()) windows.game.browserWindow.restore();
             windows.game.browserWindow.focus();
 
             /* If a second instance is opened check if it's trying to open a new game */
@@ -84,8 +80,12 @@ ipcMain.on("open-settings", () => {
 
 /* once all elements in splash screen are loaded open game screen and close splash screen */
 ipcMain.once("preload-finished", () => {
-    /* once preload is done */
+    // close the preload object
+    PreloadQueue.close();
+
+    /* once preload is done run game screen */
     if(!windows.game) windows.game = new GameWindow();
+
     const prot = protocolHandler(process.argv);
 
     // If there are any args check if the action is game and emit the load game event
@@ -107,6 +107,18 @@ ipcMain.on("force-close-app", () => {
 ipcMain.on("force-reload-app", () => {
     app.relaunch();
 });
+
+/* Quits the app if all windows are closed */
+app.on("window-all-closed", () => {
+    // Clear discord RPC
+    discordRPC.clear();
+    app.quit();
+});
+
+/**
+ * Needs to be deleted in the future.
+ * TODO: Delegate to a settings class.
+ */
 
 /* Toggle auto fullscreen */
 ipcMain.on("autofullscreen", (e) => {
@@ -134,9 +146,3 @@ ipcMain.on("copygpuinfo", () => {
         clipboard.writeText(JSON.stringify(e, null, 1));
     });
 });
-
-/* Testing purposes
-    const vendorId : number = (e as any).gpuDevice[0].vendorId;
-    const deviceId : number = (e as any).gpuDevice[0].deviceId;
-    console.log(dec2hexString(vendorId) +  dec2hexString(deviceId) );
-    */

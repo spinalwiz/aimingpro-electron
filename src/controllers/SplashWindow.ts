@@ -30,13 +30,8 @@ export class SplashWindow extends BaseWindow{
         })
 
         // Relay messages to window
-        ipcMain.on('update-status', (status) => {
-            this.browserWindow.webContents.send('update-status', status);
+        ipcMain.on('loadingscreen-status', (status) => {
+            this.browserWindow.webContents.send('loadingscreen-status', status);
         })
-    }
-
-    /* If splash screen has finished loading */
-    loaded() : void{
-        ipcMain.emit('preload-finished');
     }
 }

@@ -4,3 +4,4 @@ export * from './dec2hex';
 export * from './constant';
 export * from './updater';
 export * from './handlers';
+export * from './PreloadQueue';

@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { ipcRenderer, KeyboardEvent, KeyboardInputEvent } from "electron";
 import { IFrameGameUpdate, GameStatusUpdate } from "./types/events";
 import { DiscordActivity, GameState } from "./types";
 import { parsePageFromTitle } from "./utils/parsePageFromTitle";
@@ -74,7 +74,15 @@ window.addEventListener(
         window.addEventListener(
             "show-game-iframe",
             (e: CustomEvent<IFrameGameUpdate>) => {
-                ipcRenderer.send("game-iframe-opened", e.detail.gameId);
+                //ipcRenderer.send("game-iframe-opened", e.detail.gameId);
+                document.body.addEventListener("keydown", (kE) => {
+                    if (kE.key === "Escape") {
+                        console.log("Event Fired!");
+                        if (document.pointerLockElement) {
+                            document.exitPointerLock();
+                        }
+                    }
+                });
             }
         );
     },

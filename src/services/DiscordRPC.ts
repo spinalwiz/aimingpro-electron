@@ -26,7 +26,6 @@ export class DiscordRPC {
   }
 
   private constructor() {
-    //RPC.register(constant.DISCORD_CLIENTID);
     this.rpc = new RPC.Client({ transport: "ipc" });
 
     this.init();
@@ -53,17 +52,5 @@ export class DiscordRPC {
     ipcMain.on("activity-update", (e, arg: DiscordActivity) => {
       this.updateActivity(arg);
     });
-
-    this.rpc.addListener('ACTIVITY_JOIN_REQUEST', (e) => {
-      console.log(e);
-    })
-
-    this.rpc.addListener('ACTIVITY_INVITE', (e) => {
-      console.log(e);
-    })
-
-    this.rpc.addListener('ACTIVITY_JOIN', (e) => {
-      console.log(e);
-    })
   }
 }

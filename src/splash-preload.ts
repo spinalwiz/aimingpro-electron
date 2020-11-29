@@ -19,7 +19,7 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${type}-version`, (process.versions as any)[type]);
   }
 
-  ipcRenderer.on('update-status', (e, status : string) => {
+  ipcRenderer.on('loadingscreen-status', (e, status : string) => {
     updateLoadingDescription(status);
   })
 

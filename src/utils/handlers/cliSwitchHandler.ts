@@ -4,7 +4,7 @@ import * as os from 'os';
 /**
  * Handles the CLI Switches.
  * Needs to be called before the windows are opened!
- * @param settings SettingsList
+ * @param {SettingsList} SettingsList A list with the settings
  */
 export const cliSwitchHandler = (settings : SettingsList) : void => {
     // ignore the browser blacklist (usually to support older gpus)
