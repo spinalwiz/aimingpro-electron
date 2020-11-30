@@ -1,4 +1,4 @@
-import { session, ipcMain } from "electron";
+import { session, ipcMain, app } from "electron";
 import * as path from "path";
 import { BaseWindow } from "./baseWindow";
 import { mainDropDownMenu } from "../schemas";
@@ -60,20 +60,33 @@ export class GameWindow extends BaseWindow {
         this.browserWindow.webContents.openDevTools();
       }
 
+      /*
       // Temporarily to open settings
       if (input.control && input.shift && input.key.toLowerCase() === "n") {
         ipcMain.emit('open-settings');
-      }
+      }*/
     });
   }
 
   // Setup Event Handlers
   private initEvents() {
+    // If the game window is closed simulate window-all-closed
+    this.browserWindow.on('close', (e) => {
+      app.emit('window-all-closed');
+    })
+
     // Make sure iFrames are intercepted and opened as a full window
     ipcMain.on("game-iframe-opened", (e, gameId: number) => {
       // Make sure it's a numer to prevent any sort of injection
       this.loadGame(gameId);
     });
+
+    ipcMain.on("clear-cache", (e, gameId: number) => {
+      this.browserWindow.webContents.session.clearCache();
+      this.browserWindow.webContents.session.clearStorageData();
+      this.browserWindow.webContents.reload();
+    });
+
 
     /* automatic fullscreen on game screen | Also hide menu bars automatically */
     ipcMain.on("gamewindow", (e, arg: GameState) => {

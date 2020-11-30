@@ -26,11 +26,8 @@ export class AimingproElectronStore implements DataStore{
     }
 
     set(key: keyof DatabaseSchema, value: any) : void {
-        /* needs better checking */
-        if(key in defaultSettings){
-            this.schema[key] = value;
-            this.save();
-        }
+        this.schema[key] = value;
+        this.save();
     }
 
     load(): void {
