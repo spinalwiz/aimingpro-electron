@@ -1,13 +1,13 @@
 {
     "name": "aimingpro-client",
-    "version": "v0.0.3",
+    "version": "v0.0.1",
     "description": "The official experimental aiming.pro client",
     "main": "dist/main.js",
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
         "lint": "tslint -c tslint.json -p tsconfig.json",
-        "pretty": "prettier --write \"./**/*.{js,jsx,json}\"",
+        "pretty": "prettier --write \"./**/*.{js,jsx,ts,json}\"",
         "start": "npm run build && electron ./dist/main.js --dev",
         "start-nondev": "npm run build && electron ./dist/main.js",
         "pack": "npm run build && electron-builder --dir",
@@ -26,7 +26,6 @@
         "typescript": "^3.9.5"
     },
     "dependencies": {
-        "@types/lodash": "^4.14.165",
         "discord-rpc": "^3.1.4",
         "electron-debug": "^3.1.0",
         "electron-is-dev": "^1.2.0",
