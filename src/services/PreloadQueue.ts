@@ -55,9 +55,7 @@ export class PreloadQueue {
         const loadTime = new Date();
         if (isDev)
             console.info(
-                `${
-                    lqI.eventName
-                } has finished loading at: ${loadTime.toLocaleTimeString()}`
+                `${lqI.eventName} has finished loading at: ${loadTime.toLocaleTimeString()}`
             );
 
         // If there's any item that has not loaded yet return and break flow

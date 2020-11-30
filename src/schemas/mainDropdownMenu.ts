@@ -82,6 +82,12 @@ export const mainDropDownMenu = Menu.buildFromTemplate([
                 },
             },
             {
+                label: "Reset Client Settings",
+                click() {
+                    ipcMain.emit("settings-restore");
+                },
+            },
+            {
                 label: "Copy GPU Info (Clipboard)",
                 click() {
                     ipcMain.emit("copygpuinfo");

@@ -8,8 +8,6 @@ const settings = Settings.getInstance();
 /* set command line switches (mostly optimizations) */
 cliSwitchHandler(settings.getSettings());
 
-// TODO: IMPROVE SETTINGS
-
 /* Instantiate the DiscordRPC and the Updater */
 const discordRPC = DiscordRPC.getInstance();
 const updater = new Updater();
@@ -115,6 +113,10 @@ app.on("window-all-closed", () => {
  * Needs to be deleted in the future.
  * TODO: Delegate to a settings class.
  */
+
+ipcMain.on("settings-restore", () => {
+    settings.setDefault();
+});
 
 /* Toggle auto fullscreen */
 ipcMain.on("autofullscreen", (e) => {
