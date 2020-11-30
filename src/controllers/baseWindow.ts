@@ -1,5 +1,5 @@
 import { constant } from "../utils/constant";
-import { app, BrowserWindow, BrowserWindowConstructorOptions } from "electron";
+import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import * as path from "path";
 
 export abstract class BaseWindow {

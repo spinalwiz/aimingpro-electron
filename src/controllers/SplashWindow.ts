@@ -1,4 +1,4 @@
-import { app, ipcMain, webContents } from "electron";
+import { ipcMain } from "electron";
 import { BaseWindow } from "./baseWindow";
 
 import * as path from "path";

@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-import { autoUpdater } from "electron-updater";
 
 const updateLoadingDescription = (d: string) => {
     document.querySelector("#loading-description").textContent = d;

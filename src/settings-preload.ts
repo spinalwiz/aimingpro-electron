@@ -1,6 +1,4 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { SettingsList } from "./types";
-import { Settings } from "./services";
 
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.

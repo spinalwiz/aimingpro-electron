@@ -3,7 +3,6 @@ import { SplashWindow, GameWindow, SettingsWindow } from "./controllers";
 import { Settings, DiscordRPC, Updater, PreloadQueue } from "./services";
 import { constant, protocolHandler, cliSwitchHandler } from "./utils";
 import "v8-compile-cache";
-import * as isDev from "electron-is-dev";
 
 const settings = Settings.getInstance();
 /* set command line switches (mostly optimizations) */

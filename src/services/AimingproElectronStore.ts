@@ -2,8 +2,6 @@ import { DataStore, DatabaseSchema } from "../types/DataStore";
 
 /* SettingsList */
 import * as ElectronStore from "electron-store";
-import { defaultSettings } from "../schemas";
-
 export class AimingproElectronStore implements DataStore {
     private electronStore: ElectronStore;
     private schema: DatabaseSchema;
