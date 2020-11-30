@@ -2,51 +2,58 @@
 <html>
     <head>
         <title>Aiming.Pro | Settings</title>
-        <script rel="preload" as="script" src="https://aiming.pro/js/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://aiming.pro/css/all.css">
-        <link rel="stylesheet" href="https://aiming.pro/css/app.css">
-        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-        <script src="https://aiming.pro//js/vendor.js"></script>
+        <script src="assets/ko.js" integrity="sha512-2AL/VEauKkZqQU9BHgnv48OhXcJPx9vdzxN1JrKDVc4FPU/MEE/BZ6d9l0mP7VmvLsjtYwqiYQpDskK9dG8KBA==" crossorigin="anonymous"></script>
         <style>
-            #nav-tabContent{
-                padding: 25px 50px;
+                * {
+                margin: 0;
+                padding: 0;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -o-user-select: none;
+                user-select: none;
             }
-            #nav-tabContent .toggle-handle{
-                background-color: #23233c;
-            }
-            #nav-tabContent .toggle-off{ 
-                background-color: rgb(220, 220, 220);
+            body{
+                background-color: rgba(35, 35, 60, .8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                text-align: center;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                font-weight: bold;
             }
         </style>
     </head>
     <body>
-        <div class="col-xl-12 nav_sidebar" style="padding-bottom: 0px;">
-            <ul class="nav mt-2">
-               <li class="nav-item text-center" style="margin-right: 35px;">
-                  <a data-toggle="tab" href="#general" role="tab" class="nav-link active" aria-controls="nav-general" aria-selected="true">
-                     <p>General</p>
-                  </a>
-               </li>
-               <li class="nav-item text-center" style="margin-right: 35px;">
-                  <a href="#performance" data-toggle="tab" role="tab" class="nav-link" aria-controls="nav-performance" aria-selected="false">
-                     <p>Performance</p>
-                  </a>
-               </li>
-            </ul>
-         </div>
-         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="nav-general">
-            </div>
+        <div id="general">
+            <form>
+                <label>Unlimited Framerate: </label>
+                <input type="checkbox" data-bind="checked: unlimitedfps" required>
+                <label>Vsync: </label>
+                <input type="checkbox" data-bind="checked: vsync" required> <br>
+                <label>Auto Fullscreen: </label>
+                <input type="checkbox" data-bind="checked: fullscreenOnGameStart" required>
+                <label>Quic Protocol</label>
+                <input type="checkbox" data-bind="checked: quic" required>
+                <input type="button" class="submitbtn" name="Submit">
+            </form>
+        </div>
+        <script>
+            var sl;
 
-            <div class="tab-pane fade" id="performance" role="tabpanel" aria-labelledby="nav-performance">
-                <div class="col-md-6">
-                    <div class="form-group p-2">
-                       <label for="ads_toggle" class="mr-2">Unlimited FPS</label> 
-                       <input type="checkbox" style="width: 61.4722px; height: 40.6667px;" checked data-toggle="toggle">
-                    </div>
-                 </div>
-            </div>
-          </div>
+            const test = (...args) => { args.forEach( arg => console.log(arg)); }
+
+            document.addEventListener('PRELOAD-READY', () =>{
+                document.querySelector('.submitbtn').addEventListener('click', () => window.settings.onChange(sl()) );
+
+                window.settings.request();
+
+                window.settings.receive((e) => {
+                    sl = ko.observable(e);
+                    ko.applyBindings(sl);
+                });
+            });
+        </script>
     </body>
 </html>

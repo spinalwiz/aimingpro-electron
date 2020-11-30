@@ -1,8 +1,7 @@
-import { ipcRenderer, KeyboardEvent, KeyboardInputEvent } from "electron";
+import { ipcRenderer } from "electron";
 import { IFrameGameUpdate, GameStatusUpdate } from "./types/events";
 import { DiscordActivity, GameState } from "./types";
-import { parsePageFromTitle } from "./utils/parsePageFromTitle";
-import { constant } from "./utils/constant";
+import { parsePageFromTitle } from "./utils";
 
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
@@ -75,14 +74,44 @@ window.addEventListener(
             "show-game-iframe",
             (e: CustomEvent<IFrameGameUpdate>) => {
                 //ipcRenderer.send("game-iframe-opened", e.detail.gameId);
-                document.body.addEventListener("keydown", (kE) => {
-                    if (kE.key === "Escape") {
-                        console.log("Event Fired!");
-                        if (document.pointerLockElement) {
-                            document.exitPointerLock();
-                        }
+                let attempts = 0;
+                function injectInterception(){
+                    if(document.querySelector('.modal-body iframe')){
+                        const iFrameElement = document.querySelector('.modal-body iframe') as HTMLIFrameElement;
+                        console.log(iFrameElement);
+                        iFrameElement.contentDocument.body.addEventListener("keydown", (e) => {
+                            console.log("HIT!");
+                            if (e.key === "Escape") {
+                                if (iFrameElement.contentDocument.pointerLockElement) {
+                                    iFrameElement.contentDocument.exitPointerLock();
+                                    e.stopPropagation();
+                                }
+                            }
+                        });
+                    } else {
+                        attempts++;
+                        if(attempts < 10) setTimeout(injectInterception, 250);
                     }
-                });
+                };
+
+                /*
+                setTimeout(() => {
+                    iFrameElement = document.querySelector('.modal-body iframe') as HTMLIFrameElement;
+                    console.log(iFrameElement);
+
+                    iFrameElement.contentDocument.body.addEventListener("keydown", (e) => {
+                        console.log("HIT!");
+                        if (e.key === "Escape") {
+                            if (iFrameElement.contentDocument.pointerLockElement) {
+                                iFrameElement.contentDocument.exitPointerLock();
+                                e.stopPropagation();
+                            }
+                        }
+                    });
+                }, 100);
+                */
+
+                injectInterception();
             }
         );
     },

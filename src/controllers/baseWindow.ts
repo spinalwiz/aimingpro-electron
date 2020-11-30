@@ -12,7 +12,7 @@ export abstract class BaseWindow{
             titleBarStyle: 'hidden',
             webPreferences: {
                 preload: path.join(__dirname, '../../dist/preload.js')
-            }
+            },
         }
 
         /* use default options if none are provided */

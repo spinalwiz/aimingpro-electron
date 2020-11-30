@@ -16,10 +16,11 @@ export interface DatabaseSchema {
 }
 
 export interface DataStore {
+    readByKey(key: string): any;
+    read() : DatabaseSchema;
+
     store(settings: DatabaseSchema): void;
-    read(key: string): any;
     set(key: keyof DatabaseSchema, value: any) : void;
-    isInitialized() : boolean;
 
     load(): void;
     save(): void;

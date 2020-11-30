@@ -23,7 +23,6 @@ export const cliSwitchHandler = (settings : SettingsList) : void => {
 
     /* unlimited fps switch */
     if (settings.unlimitedfps) {
-        /* unlimited fps */
         app.commandLine.appendSwitch("disable-frame-rate-limit");
         /* Improve unlimited FPS performance on AMD cpus */
         if (os.cpus()[0].model.indexOf("AMD") > -1)

@@ -1,7 +1,7 @@
-import { app, session, ipcMain, protocol, net } from "electron";
+import { session, ipcMain } from "electron";
 import * as path from "path";
 import { BaseWindow } from "./baseWindow";
-import { mainDropDownMenu } from "../utils/dropdownMenu";
+import { mainDropDownMenu } from "../schemas";
 import { constant } from "../utils/constant";
 
 import { Settings } from "../services/Settings";
@@ -15,6 +15,7 @@ export class GameWindow extends BaseWindow {
       },
       show: false,
       frame: true,
+      backgroundColor: '#fff'
     });
   }
 
@@ -58,6 +59,11 @@ export class GameWindow extends BaseWindow {
       if (input.control && input.shift && input.key.toLowerCase() === "i") {
         this.browserWindow.webContents.openDevTools();
       }
+
+      // Temporarily to open settings
+      if (input.control && input.shift && input.key.toLowerCase() === "n") {
+        ipcMain.emit('open-settings');
+      }
     });
   }
 
@@ -71,17 +77,11 @@ export class GameWindow extends BaseWindow {
 
     /* automatic fullscreen on game screen | Also hide menu bars automatically */
     ipcMain.on("gamewindow", (e, arg: GameState) => {
-      const tempSettings = Settings.getInstance().getSettings();
-
-      if (arg === GameState.Opened) {
-        if (tempSettings.fullscreenOnGameStart)
-          this.browserWindow.setFullScreen(true);
-        this.browserWindow.setMenuBarVisibility(false);
-      } else if (arg === GameState.Closed) {
-        if (tempSettings.fullscreenOnGameStart)
-          this.browserWindow.setFullScreen(false);
-        this.browserWindow.setMenuBarVisibility(true);
-      }
+      const settings = Settings.getInstance().getSettings();
+      // Fullscreen on gamestart if enabled
+      if(settings.fullscreenOnGameStart) this.browserWindow.setFullScreen(arg === GameState.Opened);
+      // Show menu bar if game is not opened
+      this.browserWindow.setMenuBarVisibility((arg !== GameState.Opened));
     });
   }
 }

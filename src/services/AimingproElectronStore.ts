@@ -2,6 +2,7 @@ import { DataStore, DatabaseSchema } from "../types/DataStore";
 
 /* SettingsList */
 import * as ElectronStore from 'electron-store';
+import { defaultSettings } from '../schemas'
 
 export class AimingproElectronStore implements DataStore{
     private electronStore : ElectronStore;
@@ -16,29 +17,24 @@ export class AimingproElectronStore implements DataStore{
         this.save();
     }
 
-    read(key: string): any {
+    readByKey(key: string): any {
         return this.schema[key as keyof DatabaseSchema];
+    }
+
+    read(){
+        return this.schema;
     }
 
     set(key: keyof DatabaseSchema, value: any) : void {
         /* needs better checking */
-        if(key in this.schema){
+        if(key in defaultSettings){
             this.schema[key] = value;
             this.save();
         }
     }
 
     load(): void {
-        // quick hack (FIX)
-        const temp = {};
-        Object.assign(temp, this.electronStore.store);
-        this.schema = temp as DatabaseSchema;
-    }
-
-    isInitialized(){
-        // Needs better checking
-        if(Object.keys(this.electronStore.store).length === 0) return false;
-        return true;
+        this.schema = this.electronStore.store as any;
     }
 
     /* debugging purposes */

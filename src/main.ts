@@ -1,16 +1,16 @@
 import { app, ipcMain, clipboard } from "electron";
 import { SplashWindow, GameWindow, SettingsWindow } from "./controllers";
-import { Settings, DiscordRPC } from "./services";
-import { constant, protocolHandler, cliSwitchHandler, Updater, PreloadQueue } from "./utils";
+import { Settings, DiscordRPC, Updater, PreloadQueue } from "./services";
+import { constant, protocolHandler, cliSwitchHandler } from "./utils";
 import "v8-compile-cache";
-
-import electronDebug = require("electron-debug");
 import * as isDev from "electron-is-dev";
-if (isDev) electronDebug();
 
 const settings = Settings.getInstance();
 /* set command line switches (mostly optimizations) */
 cliSwitchHandler(settings.getSettings());
+
+
+// TODO: IMPROVE SETTINGS
 
 /* Instantiate the DiscordRPC and the Updater */
 const discordRPC = DiscordRPC.getInstance();
@@ -30,10 +30,7 @@ const windows: {
  */
 app.on("ready", () => {
     // This emits 'preload-finished' when all given events have fired on ipcMain which starts the GameWindows
-    PreloadQueue.start(['update-finished', 'minimum-waiting-time']);
-
-    // Simulate 1500ms waiting time
-    setTimeout(() => ipcMain.emit('minimum-waiting-time'), 1500);
+    PreloadQueue.start(['update-finished']);
 
     // initialize splash window
     windows.splash = new SplashWindow();
