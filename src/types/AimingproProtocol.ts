@@ -3,6 +3,6 @@ export type ActionType = "game" | "page";
 export type ParameterType = number | string;
 
 export interface ProtocolType {
-    action: ActionType,
-    parameter: ParameterType
+    action: ActionType;
+    parameter: ParameterType;
 }

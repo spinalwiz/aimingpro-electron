@@ -1,2 +1,2 @@
-export * from './GameStatusUpdate';
-export * from './IFrameGameUpdate';
+export * from "./GameStatusUpdate";
+export * from "./IFrameGameUpdate";

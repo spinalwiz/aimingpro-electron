@@ -18,7 +18,10 @@ const deepCompareObjects = (a: any, b: any) => {
                     bIna = true;
             if (!bIna) return false;
             if (aKey === bKey && typeof a[aKey] === typeof b[bKey]) {
-                if (typeof a[aKey] === "object" && !deepCompareObjects( a[aKey] , b[bKey]) )
+                if (
+                    typeof a[aKey] === "object" &&
+                    !deepCompareObjects(a[aKey], b[bKey])
+                )
                     return false;
                 aInb = true;
             }
@@ -38,8 +41,11 @@ const fixDatabase = (ref: any, src: any) => {
         for (const bKey in src) {
             // TODO: add another loop over A which adds missing fields
             if (aKey === bKey) {
-                if(typeof ref[aKey] !== typeof src[bKey]) src[bKey] = ref[aKey];
-                if (typeof ref[aKey] === "object"){ src[bKey] = fixDatabase(ref[aKey], src[bKey]); }
+                if (typeof ref[aKey] !== typeof src[bKey])
+                    src[bKey] = ref[aKey];
+                if (typeof ref[aKey] === "object") {
+                    src[bKey] = fixDatabase(ref[aKey], src[bKey]);
+                }
             }
         }
     }

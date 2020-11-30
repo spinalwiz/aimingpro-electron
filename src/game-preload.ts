@@ -5,9 +5,7 @@ import { parsePageFromTitle } from "./utils";
 const gameActivity = (status: GameStatusUpdate) => {
     const activity: DiscordActivity = {
         title: status.gameName,
-        description: String(
-            `Current HS: ${status.highScore.toString()}`
-        ),
+        description: String(`Current HS: ${status.highScore.toString()}`),
     };
 
     // Send the activity-update
@@ -30,7 +28,10 @@ window.addEventListener(
     "DOMContentLoaded",
     () => {
         // returns true if the current window contains the gameVue object (game screen)
-        const gameState: GameState = typeof (window as any).gameVue === "object" ? GameState.Opened : GameState.Closed;
+        const gameState: GameState =
+            typeof (window as any).gameVue === "object"
+                ? GameState.Opened
+                : GameState.Closed;
 
         // Send event if the game window is opened
         ipcRenderer.send("gamewindow", gameState);
@@ -48,9 +49,9 @@ window.addEventListener(
         );
 
         // Auto fullscreen on iFrame as well
-        window.addEventListener('game-modal-closed', () => {
+        window.addEventListener("game-modal-closed", () => {
             browseActivity();
-            ipcRenderer.send("gamewindow", GameState.Closed)
+            ipcRenderer.send("gamewindow", GameState.Closed);
         });
 
         // Pointerlock fix
@@ -67,7 +68,7 @@ window.addEventListener(
         }
 
         // iFrame
-        window.addEventListener('project-started', () => {
+        window.addEventListener("project-started", () => {
             // Let the controller now that a game has been opened
             ipcRenderer.send("gamewindow", GameState.Opened);
 
@@ -78,23 +79,19 @@ window.addEventListener(
                     selector
                 ) as HTMLIFrameElement;
 
-                el.contentDocument.addEventListener(
-                    "keydown",
-                    (e) => {
-                        if (e.key === "Escape") {
-                            const elEvent = document.querySelector(
-                                selector
-                            ) as HTMLIFrameElement;
-                            if (
-                                elEvent.contentDocument.pointerLockElement
-                            ) {
-                                elEvent.contentDocument.exitPointerLock();
-                                e.stopPropagation();
-                            }
+                el.contentDocument.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") {
+                        const elEvent = document.querySelector(
+                            selector
+                        ) as HTMLIFrameElement;
+                        if (elEvent.contentDocument.pointerLockElement) {
+                            elEvent.contentDocument.exitPointerLock();
+                            e.stopPropagation();
                         }
                     }
-                );
-        }});
+                });
+            }
+        });
     },
     false
 );

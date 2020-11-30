@@ -1,12 +1,12 @@
 import { SettingsList } from "../../types";
-import { app } from 'electron';
-import * as os from 'os';
+import { app } from "electron";
+import * as os from "os";
 /**
  * Handles the CLI Switches.
  * Needs to be called before the windows are opened!
  * @param {SettingsList} SettingsList A list with the settings
  */
-export const cliSwitchHandler = (settings : SettingsList) : void => {
+export const cliSwitchHandler = (settings: SettingsList): void => {
     // ignore the browser blacklist (usually to support older gpus)
     app.commandLine.appendSwitch("ignore-gpu-blacklist");
 
@@ -26,7 +26,7 @@ export const cliSwitchHandler = (settings : SettingsList) : void => {
         app.commandLine.appendSwitch("disable-frame-rate-limit");
         /* Improve unlimited FPS performance on AMD cpus */
         if (os.cpus()[0].model.indexOf("AMD") > -1)
-        app.commandLine.appendSwitch("enable-zero-copy");
+            app.commandLine.appendSwitch("enable-zero-copy");
     }
 
     // vsync can only be off if unlimited fps are on
@@ -42,4 +42,4 @@ export const cliSwitchHandler = (settings : SettingsList) : void => {
         app.commandLine.appendSwitch("renderer-process-limit", "100");
         app.commandLine.appendSwitch("max-active-webgl-contexts", "100");
     }
-}
+};

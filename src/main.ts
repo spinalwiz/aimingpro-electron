@@ -9,7 +9,6 @@ const settings = Settings.getInstance();
 /* set command line switches (mostly optimizations) */
 cliSwitchHandler(settings.getSettings());
 
-
 // TODO: IMPROVE SETTINGS
 
 /* Instantiate the DiscordRPC and the Updater */
@@ -30,7 +29,7 @@ const windows: {
  */
 app.on("ready", () => {
     // This emits 'preload-finished' when all given events have fired on ipcMain which starts the GameWindows
-    PreloadQueue.start(['update-finished']);
+    PreloadQueue.start(["update-finished"]);
 
     // initialize splash window
     windows.splash = new SplashWindow();
@@ -52,7 +51,8 @@ if (!gotTheLock) {
         // Someone tried to run a second instance, we should focus our window.
         if (windows.game) {
             // Focus on main window if second instance is attempted
-            if (windows.game.browserWindow.isMinimized()) windows.game.browserWindow.restore();
+            if (windows.game.browserWindow.isMinimized())
+                windows.game.browserWindow.restore();
             windows.game.browserWindow.focus();
 
             /* If a second instance is opened check if it's trying to open a new game */
@@ -81,7 +81,7 @@ ipcMain.once("preload-finished", () => {
     PreloadQueue.close();
 
     /* once preload is done run game screen */
-    if(!windows.game) windows.game = new GameWindow();
+    if (!windows.game) windows.game = new GameWindow();
 
     const prot = protocolHandler(process.argv);
 

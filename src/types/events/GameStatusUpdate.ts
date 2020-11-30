@@ -1,5 +1,5 @@
 export interface GameStatusUpdate {
-    gameId: number,
-    highScore: number,
-    gameName: string
+    gameId: number;
+    highScore: number;
+    gameName: string;
 }

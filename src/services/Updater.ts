@@ -2,58 +2,58 @@ import { ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import * as isDev from "electron-is-dev";
 
-export class Updater{
-    public constructor(){
+export class Updater {
+    public constructor() {
         this.attachEventListeners();
     }
 
-    check(){
-      // If on dev don't update
-      if(isDev){
-        ipcMain.emit('update-finished');
-        return;
-      }
+    check() {
+        // If on dev don't update
+        if (isDev) {
+            ipcMain.emit("update-finished");
+            return;
+        }
 
-      autoUpdater.checkForUpdates().catch((e) => {
-        // tslint:disable-next-line: no-console
-        console.error(`An error has occured in the updater: ${e}`);
-        ipcMain.emit("update-finished");
-      });
-    };
+        autoUpdater.checkForUpdates().catch((e) => {
+            // tslint:disable-next-line: no-console
+            console.error(`An error has occured in the updater: ${e}`);
+            ipcMain.emit("update-finished");
+        });
+    }
 
-    private attachEventListeners(){
-            // Checking for updates
-    autoUpdater.on("checking-for-update", (info) => {
-        ipcMain.emit('loadingscreen-status',"Checking for Updates...");
-    });
+    private attachEventListeners() {
+        // Checking for updates
+        autoUpdater.on("checking-for-update", (info) => {
+            ipcMain.emit("loadingscreen-status", "Checking for Updates...");
+        });
 
-      // Show error message and load old app
-      autoUpdater.on("error", (e) => {
-        ipcMain.emit('loadingscreen-status', "An Error has Occured!")
-        setTimeout(() => ipcMain.emit("update-finished"), 2500);
-      });
+        // Show error message and load old app
+        autoUpdater.on("error", (e) => {
+            ipcMain.emit("loadingscreen-status", "An Error has Occured!");
+            setTimeout(() => ipcMain.emit("update-finished"), 2500);
+        });
 
-      // download progress update
-      autoUpdater.on("download-progress", (e) => {
-        const percent = (e.percent as number).toFixed(0);
-        ipcMain.emit('loadingscreen-status', `Download at ${percent}%`);
-      });
+        // download progress update
+        autoUpdater.on("download-progress", (e) => {
+            const percent = (e.percent as number).toFixed(0);
+            ipcMain.emit("loadingscreen-status", `Download at ${percent}%`);
+        });
 
-      // update is available
-      autoUpdater.on("update-available", (e) => {
-        ipcMain.emit('loadingscreen-status',"Updates Available...");
-      });
+        // update is available
+        autoUpdater.on("update-available", (e) => {
+            ipcMain.emit("loadingscreen-status", "Updates Available...");
+        });
 
-      // no update available
-      autoUpdater.on("update-not-available", (info) => {
-        ipcMain.emit('loadingscreen-status', "No Updates Available...");
-        setTimeout(() => ipcMain.emit("update-finished"), 1000);
-      });
+        // no update available
+        autoUpdater.on("update-not-available", (info) => {
+            ipcMain.emit("loadingscreen-status", "No Updates Available...");
+            setTimeout(() => ipcMain.emit("update-finished"), 1000);
+        });
 
-      // downloaded
-      autoUpdater.on("update-downloaded", (info) => {
-        ipcMain.emit('loadingscreen-status',"Preparing Installation...");
-          setTimeout(() => autoUpdater.quitAndInstall(), 2500);
-      });
+        // downloaded
+        autoUpdater.on("update-downloaded", (info) => {
+            ipcMain.emit("loadingscreen-status", "Preparing Installation...");
+            setTimeout(() => autoUpdater.quitAndInstall(), 2500);
+        });
     }
 }

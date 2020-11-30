@@ -1,10 +1,10 @@
 import { app, ipcMain, webContents } from "electron";
-import { BaseWindow } from "./baseWindow"
+import { BaseWindow } from "./baseWindow";
 
-import * as path from 'path';
+import * as path from "path";
 
-export class SplashWindow extends BaseWindow{
-    constructor(){
+export class SplashWindow extends BaseWindow {
+    constructor() {
         super({
             show: false,
             frame: false,
@@ -15,23 +15,25 @@ export class SplashWindow extends BaseWindow{
             width: 500,
             webPreferences: {
                 nodeIntegration: true,
-                preload: path.join(__dirname, '../../dist/splash-preload.js')
-            }
+                preload: path.join(__dirname, "../../dist/splash-preload.js"),
+            },
         });
     }
 
-    init(){
+    init() {
         /* init triggered */
-        this.browserWindow.loadFile(path.join(__dirname, "../views/splash.html"));
+        this.browserWindow.loadFile(
+            path.join(__dirname, "../views/splash.html")
+        );
 
         // Tell the updater we're ready to update
-        this.browserWindow.once('ready-to-show', () => {
-            ipcMain.emit('ready-for-update');
-        })
+        this.browserWindow.once("ready-to-show", () => {
+            ipcMain.emit("ready-for-update");
+        });
 
         // Relay messages to window
-        ipcMain.on('loadingscreen-status', (status) => {
-            this.browserWindow.webContents.send('loadingscreen-status', status);
-        })
+        ipcMain.on("loadingscreen-status", (status) => {
+            this.browserWindow.webContents.send("loadingscreen-status", status);
+        });
     }
 }

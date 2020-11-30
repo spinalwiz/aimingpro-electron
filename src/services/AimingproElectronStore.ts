@@ -1,18 +1,18 @@
 import { DataStore, DatabaseSchema } from "../types/DataStore";
 
 /* SettingsList */
-import * as ElectronStore from 'electron-store';
-import { defaultSettings } from '../schemas'
+import * as ElectronStore from "electron-store";
+import { defaultSettings } from "../schemas";
 
-export class AimingproElectronStore implements DataStore{
-    private electronStore : ElectronStore;
-    private schema : DatabaseSchema;
+export class AimingproElectronStore implements DataStore {
+    private electronStore: ElectronStore;
+    private schema: DatabaseSchema;
 
-    constructor(){
+    constructor() {
         this.electronStore = new ElectronStore();
     }
 
-    store(settings : DatabaseSchema): void {
+    store(settings: DatabaseSchema): void {
         this.schema = settings;
         this.save();
     }
@@ -21,11 +21,11 @@ export class AimingproElectronStore implements DataStore{
         return this.schema[key as keyof DatabaseSchema];
     }
 
-    read(){
+    read() {
         return this.schema;
     }
 
-    set(key: keyof DatabaseSchema, value: any) : void {
+    set(key: keyof DatabaseSchema, value: any): void {
         this.schema[key] = value;
         this.save();
     }
@@ -35,7 +35,7 @@ export class AimingproElectronStore implements DataStore{
     }
 
     /* debugging purposes */
-    public display(){
+    public display() {
         console.log(this.schema);
     }
 
