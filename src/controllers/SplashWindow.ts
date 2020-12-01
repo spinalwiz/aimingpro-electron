@@ -16,6 +16,8 @@ export class SplashWindow extends BaseWindow {
             webPreferences: {
                 nodeIntegration: true,
                 preload: path.join(__dirname, "../../dist/splash-preload.js"),
+                // TODO: Rewrite the preload logic with a contextbridge because security reasons
+                contextIsolation: false
             },
         });
     }

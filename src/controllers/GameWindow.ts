@@ -11,7 +11,9 @@ export class GameWindow extends BaseWindow {
         super({
             webPreferences: {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
-                enableWebSQL: false
+                enableWebSQL: false,
+                // TODO: Rewrite the preload logic with a contextbridge because security reasons
+                contextIsolation: false
             },
             show: false,
             frame: true,
