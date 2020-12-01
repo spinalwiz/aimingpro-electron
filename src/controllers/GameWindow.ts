@@ -11,9 +11,10 @@ export class GameWindow extends BaseWindow {
         super({
             webPreferences: {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
+                enableWebSQL: false
             },
             show: false,
-            frame: true
+            frame: true,
         });
     }
 
