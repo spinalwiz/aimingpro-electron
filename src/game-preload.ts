@@ -27,36 +27,10 @@ const browseActivity = () => {
 window.addEventListener(
     "DOMContentLoaded",
     () => {
-        // returns true if the current window contains the gameVue object (game screen)
-        const gameState: GameState =
-            typeof (window as any).gameVue === "object"
-                ? GameState.Opened
-                : GameState.Closed;
 
-        // Send event if the game window is opened
-        ipcRenderer.send("gamewindow", gameState);
-
-        // If game is close on page load show browseActivity
-        if (gameState === GameState.Closed) browseActivity();
-
-        /* Wait for Game Events RPC if game is opened */
-        window.addEventListener(
-            "game-status-update",
-            (e: CustomEvent<GameStatusUpdate>) => {
-                // Prepare the discord template
-                gameActivity(e.detail);
-            }
-        );
-
-        // Auto fullscreen on iFrame as well
-        window.addEventListener("game-modal-closed", () => {
-            browseActivity();
-            ipcRenderer.send("gamewindow", GameState.Closed);
-        });
-
-        // Pointerlock fix
-        if (gameState === GameState.Opened) {
-            /* Release pointer lock on key press */
+        // IF GAME PAGE
+        if(typeof (window as any).gameVue === "object"){
+            // Pointer lock fix
             document.body.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") {
                     if (document.pointerLockElement) {
@@ -65,20 +39,41 @@ window.addEventListener(
                     }
                 }
             });
+        // IF NOT GAME PAGE
+        } else {
+            // let the controller know and update activity
+            browseActivity();
+            ipcRenderer.send("gamewindow", GameState.Closed);
         }
 
-        // iFrame
+        /* Wait for Game Events to send to the RPC */
+        window.addEventListener(
+            "game-status-update",
+            (e: CustomEvent<GameStatusUpdate>) => {
+                // Prepare the discord template
+                gameActivity(e.detail);
+            }
+        );
+
+        // If modal is closed let the controller now and update the activity
+        window.addEventListener("game-modal-closed", () => {
+            browseActivity();
+            ipcRenderer.send("gamewindow", GameState.Closed);
+        });
+
+        // If a game has started
         window.addEventListener("project-started", () => {
             // Let the controller now that a game has been opened
             ipcRenderer.send("gamewindow", GameState.Opened);
 
-            // Pointer lock fix
+            // If game has started as a MODAL
             const selector = "#game-container";
             if (document.querySelector(selector) !== null) {
                 const el = document.querySelector(
                     selector
                 ) as HTMLIFrameElement;
 
+                // Pointerlock fix
                 el.contentDocument.addEventListener("keydown", (e) => {
                     if (e.key === "Escape") {
                         const elEvent = document.querySelector(

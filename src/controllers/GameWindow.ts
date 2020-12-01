@@ -3,7 +3,6 @@ import * as path from "path";
 import { BaseWindow } from "./baseWindow";
 import { mainDropDownMenu } from "../schemas";
 import { constant } from "../utils/constant";
-
 import { Settings } from "../services/Settings";
 import { GameState } from "../types";
 
@@ -14,8 +13,7 @@ export class GameWindow extends BaseWindow {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
             },
             show: false,
-            frame: true,
-            backgroundColor: "#fff",
+            frame: true
         });
     }
 
@@ -48,7 +46,7 @@ export class GameWindow extends BaseWindow {
         if (isNaN(gameId)) return;
         // TODO: Check if the game actually exists
         this.isLoggedIn().then((e) => {
-            // if not logged in redirect to login page
+            // if not logged in redirect to login page | Else load the game
             const href = e
                 ? constant.gameBaseUrl + gameId
                 : constant.baseUrl + "login";
@@ -85,13 +83,7 @@ export class GameWindow extends BaseWindow {
             app.emit("window-all-closed");
         });
 
-        // Make sure iFrames are intercepted and opened as a full window
-        ipcMain.on("game-iframe-opened", (e, gameId: number) => {
-            // Make sure it's a numer to prevent any sort of injection
-            this.loadGame(gameId);
-        });
-
-        ipcMain.on("clear-cache", (e, gameId: number) => {
+        ipcMain.on("clear-cache", () => {
             this.browserWindow.webContents.session.clearCache();
             this.browserWindow.webContents.session.clearStorageData();
             this.browserWindow.webContents.reload();
