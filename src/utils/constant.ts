@@ -1,5 +1,3 @@
-import { app } from "electron";
-
 // TODO: delegate to a config?
 const HOSTNAME = "aiming.pro";
 
