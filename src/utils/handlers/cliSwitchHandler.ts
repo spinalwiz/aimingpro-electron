@@ -12,8 +12,6 @@ export const cliSwitchHandler = (settings: SettingsList): void => {
 
     // force Dedicated GPU
     app.commandLine.appendSwitch("force_high_performance_gpu");
-    // force rendering even if not focused
-    app.commandLine.appendSwitch("disable-renderer-backgrounding");
 
     // experimental fix for blurry fonts
     app.commandLine.appendSwitch("high-dpi-support", "1");
