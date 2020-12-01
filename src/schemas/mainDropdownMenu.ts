@@ -1,4 +1,4 @@
-import { ipcMain, Menu } from "electron";
+import { ipcMain, Menu, app } from "electron";
 
 export const mainDropDownMenu = Menu.buildFromTemplate([
     {
@@ -19,6 +19,8 @@ export const mainDropDownMenu = Menu.buildFromTemplate([
           ipcMain.emit('open-settings');
       }
     },*/
+            { label: `App Version: ${app.getVersion()}`, enabled: false },
+            { type: "separator" },
             { label: "Settings", enabled: false },
             { type: "separator" },
             {
