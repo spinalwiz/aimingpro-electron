@@ -1,7 +1,7 @@
-import { app, ipcMain, clipboard } from "electron";
-import { SplashWindow, GameWindow, SettingsWindow } from "./controllers";
-import { Settings, DiscordRPC, Updater, PreloadQueue } from "./services";
-import { constant, protocolHandler, cliSwitchHandler } from "./utils";
+import { app, ipcMain } from "electron";
+import { GameWindow, SplashWindow } from "./controllers";
+import { DiscordRPC, PreloadQueue, Settings, Updater } from "./services";
+import { APClientSettings, cliSwitchHandler, consoleLogger, protocolURIParser } from "./utils";
 import "v8-compile-cache";
 
 const settings = Settings.getInstance();
@@ -15,11 +15,9 @@ const updater = new Updater();
 const windows: {
     game: GameWindow;
     splash: SplashWindow;
-    settings: SettingsWindow;
 } = {
     game: null,
-    splash: null,
-    settings: null,
+    splash: null
 };
 
 /* APP INITIALIZATION
@@ -35,7 +33,7 @@ app.on("ready", () => {
     updater.check();
 
     // Set windows to use aimingpro as default protocol
-    app.setAsDefaultProtocolClient(constant.PROTOCOL_PREFIX);
+    if (app.setAsDefaultProtocolClient(APClientSettings.PROTOCOL_PREFIX)) consoleLogger.warn("Protocol couldn't be attached");
 });
 
 // prevent second instance of app from running
@@ -48,29 +46,35 @@ if (!gotTheLock) {
         // Someone tried to run a second instance, we should focus our window.
         if (windows.game) {
             // Focus on main window if second instance is attempted
-            if (windows.game.browserWindow.isMinimized())
-                windows.game.browserWindow.restore();
-            windows.game.browserWindow.focus();
+            if (windows.game.getBrowserWindow().isMinimized()) windows.game.getBrowserWindow().restore();
+            windows.game.getBrowserWindow().focus();
 
-            /* If a second instance is opened check if it's trying to open a new game */
-            const prot = protocolHandler(commandLine);
-            // If there are any args check if the action is game and emit the load game event
-            if (prot && prot.action === "game") {
-                windows.game.loadGame(+prot.parameter);
-            }
+            protocolHandler(commandLine);
         }
     });
 }
+
+const protocolHandler = (arg: string[]): void => {
+    const prot = protocolURIParser(arg);
+
+    // if the game hasn't loaded yet, wait for the event
+    if (windows.game == null) {
+        ipcMain.once("gamewindow-ready", () => {
+            // If there are any args check if the action is game and emit the load game event
+            if (prot && prot.action === "game") windows.game.loadGame(+prot.parameter);
+            if (prot && prot.action === "playlist") windows.game.loadPlaylist(+prot.parameter);
+        });
+    } else {
+        // If there are any args check if the action is game and emit the load game event
+        if (prot && prot.action === "game") windows.game.loadGame(+prot.parameter);
+        if (prot && prot.action === "playlist") windows.game.loadPlaylist(+prot.parameter);
+    }
+};
 
 /* EVENTS
  * From here on down it's mostly event handling.
  * This is probably going to be separated in the future.
  */
-
-/* Create Settings instance on 'open-settings' event */
-ipcMain.on("open-settings", () => {
-    windows.settings = new SettingsWindow();
-});
 
 /* once all elements in splash screen are loaded open game screen and close splash screen */
 ipcMain.once("preload-finished", () => {
@@ -78,18 +82,19 @@ ipcMain.once("preload-finished", () => {
     PreloadQueue.close();
 
     /* once preload is done run game screen */
-    if (!windows.game) windows.game = new GameWindow();
+    if (windows.game === null) windows.game = new GameWindow();
 
-    const prot = protocolHandler(process.argv);
-
-    // If there are any args check if the action is game and emit the load game event
-    if (prot && prot.action === "game") {
-        windows.game.loadGame(+prot.parameter);
-    }
+    // Make sure the handler is only executed after the call
+    protocolHandler(process.argv);
 
     // Get rid off splash screen
-    windows.splash.browserWindow.close();
+    windows.splash.getBrowserWindow().close();
     windows.splash = null;
+});
+
+app.on("open-url", (event, args) => {
+    event.preventDefault();
+    protocolHandler(Array(args));
 });
 
 /* Forcefully closes the app */
@@ -107,40 +112,4 @@ app.on("window-all-closed", () => {
     // Clear discord RPC
     discordRPC.clear();
     app.quit();
-});
-
-/**
- * Needs to be deleted in the future.
- * TODO: Delegate to a settings class.
- */
-
-ipcMain.on("settings-restore", () => {
-    settings.setDefault();
-});
-
-/* Toggle auto fullscreen */
-ipcMain.on("autofullscreen", (e) => {
-    settings.setSettings("fullscreenOnGameStart", e);
-});
-
-/* Toggle unlimited fps */
-ipcMain.on("unlimitedfps", (e) => {
-    settings.setSettings("unlimitedfps", e);
-    app.relaunch();
-    app.exit();
-});
-
-/* Toggle vsync */
-ipcMain.on("vsync", (e) => {
-    settings.setSettings("vsync", e);
-    if ((e as any) === true) settings.setSettings("unlimitedfps", false);
-    app.relaunch();
-    app.exit();
-});
-
-/* Copy GPU Info to clipboard */
-ipcMain.on("copygpuinfo", () => {
-    app.getGPUInfo("complete").then((e) => {
-        clipboard.writeText(JSON.stringify(e, null, 1));
-    });
 });

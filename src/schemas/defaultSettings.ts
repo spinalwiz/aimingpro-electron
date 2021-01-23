@@ -1,4 +1,4 @@
-import { DatabaseSchema } from "../types/DataStore";
+import { DatabaseSchema } from "../types";
 
 export const defaultSettings: DatabaseSchema = {
     settings: {
@@ -6,9 +6,9 @@ export const defaultSettings: DatabaseSchema = {
         fullscreenOnGameStart: true,
         d3d11: true,
         quic: true,
-        vsync: false,
+        vsync: false
     },
     keybinds: {
-        maximize: "f11",
-    },
+        maximize: "f11"
+    }
 };

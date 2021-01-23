@@ -1,11 +1,14 @@
-import { ipcMain } from "electron";
-import { BaseWindow } from "./baseWindow";
+import { BrowserWindow, BrowserWindowConstructorOptions, ipcMain } from "electron";
 
 import * as path from "path";
+import { APClientSettings, consoleLogger } from "../utils";
+import { APBrowserWindow } from "../types";
 
-export class SplashWindow extends BaseWindow {
+export class SplashWindow implements APBrowserWindow {
+    private readonly browserWindow: BrowserWindow;
+
     constructor() {
-        super({
+        const browserOptions: BrowserWindowConstructorOptions = {
             show: false,
             frame: false,
             transparent: true,
@@ -13,12 +16,32 @@ export class SplashWindow extends BaseWindow {
             resizable: false,
             height: 400,
             width: 500,
+            titleBarStyle: "hidden",
             webPreferences: {
                 nodeIntegration: true,
-                preload: path.join(__dirname, "../../dist/splash-preload.js"),
-                // TODO: Rewrite the preload logic with a contextbridge because security reasons
                 contextIsolation: false
-            },
+            }
+        };
+
+        /* use default options if none are provided */
+        if (this.browserWindow == null) this.browserWindow = new BrowserWindow(browserOptions);
+
+        /* Set default custom user agent */
+        this.browserWindow.webContents.setUserAgent(
+            this.browserWindow.webContents.getUserAgent() + APClientSettings.userAgentSuffix
+        );
+
+        this.init();
+
+        // Make sure window is destroyed when closed (NOT MINIMZED).
+        // Still needs nullifying reference to this object.
+        this.browserWindow.on("close", () => {
+            this.browserWindow.destroy();
+        });
+
+        // Gracefully show windows
+        this.browserWindow.on("ready-to-show", () => {
+            this.browserWindow.show();
         });
     }
 
@@ -26,7 +49,7 @@ export class SplashWindow extends BaseWindow {
         /* init triggered */
         this.browserWindow.loadFile(
             path.join(__dirname, "../views/splash.html")
-        );
+        ).catch(consoleLogger.critical);
 
         // Tell the updater we're ready to update
         this.browserWindow.once("ready-to-show", () => {
@@ -37,5 +60,9 @@ export class SplashWindow extends BaseWindow {
         ipcMain.on("loadingscreen-status", (status) => {
             this.browserWindow.webContents.send("loadingscreen-status", status);
         });
+    }
+
+    getBrowserWindow(): Electron.BrowserWindow {
+        return this.browserWindow;
     }
 }

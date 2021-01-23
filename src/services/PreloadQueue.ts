@@ -8,8 +8,26 @@ type LoadingQueueType = { eventName: string; loaded: boolean };
  * PreloadQueue emits 'preload-finished' on ipcMain once all events have finished loading.
  */
 export class PreloadQueue {
-    private loadingqueue: LoadingQueueType[] = [];
     private static instance: PreloadQueue;
+    private loadingqueue: LoadingQueueType[] = [];
+
+    private constructor(eventNames: string[]) {
+        eventNames.forEach((e) => {
+            // Prepare object so it can be passed by reference
+            const lqItem: LoadingQueueType = {
+                eventName: e,
+                loaded: false
+            };
+
+            // push item onto loadingqueue
+            this.loadingqueue.push(lqItem);
+
+            // Onc event is loaded pass its object to loaded
+            ipcMain.once(e, () => {
+                this.loaded(lqItem);
+            });
+        });
+    }
 
     /**
      * PreloadQueue emits 'preload-finished' on ipcMain once all events have finished loading.
@@ -27,24 +45,6 @@ export class PreloadQueue {
         if (PreloadQueue.instance) {
             this.instance = null;
         }
-    }
-
-    private constructor(eventNames: string[]) {
-        eventNames.forEach((e) => {
-            // Prepare object so it can be passed by reference
-            const lqItem: LoadingQueueType = {
-                eventName: e,
-                loaded: false,
-            };
-
-            // push item onto loadingqueue
-            this.loadingqueue.push(lqItem);
-
-            // Onc event is loaded pass its object to loaded
-            ipcMain.once(e, () => {
-                this.loaded(lqItem);
-            });
-        });
     }
 
     private loaded(lqI: LoadingQueueType) {

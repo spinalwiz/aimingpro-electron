@@ -23,12 +23,12 @@ export class Updater {
 
     private attachEventListeners() {
         // Checking for updates
-        autoUpdater.on("checking-for-update", (info) => {
+        autoUpdater.on("checking-for-update", () => {
             ipcMain.emit("loadingscreen-status", "Checking for Updates...");
         });
 
         // Show error message and load old app
-        autoUpdater.on("error", (e) => {
+        autoUpdater.on("error", () => {
             ipcMain.emit("loadingscreen-status", "An Error has Occured!");
             setTimeout(() => ipcMain.emit("update-finished"), 2500);
         });
@@ -40,18 +40,18 @@ export class Updater {
         });
 
         // update is available
-        autoUpdater.on("update-available", (e) => {
+        autoUpdater.on("update-available", () => {
             ipcMain.emit("loadingscreen-status", "Updates Available...");
         });
 
         // no update available
-        autoUpdater.on("update-not-available", (info) => {
+        autoUpdater.on("update-not-available", () => {
             ipcMain.emit("loadingscreen-status", "No Updates Available...");
             setTimeout(() => ipcMain.emit("update-finished"), 1000);
         });
 
         // downloaded
-        autoUpdater.on("update-downloaded", (info) => {
+        autoUpdater.on("update-downloaded", () => {
             ipcMain.emit("loadingscreen-status", "Preparing Installation...");
             setTimeout(() => autoUpdater.quitAndInstall(), 2500);
         });

@@ -1,2 +1,2 @@
 export * from "./cliSwitchHandler";
-export * from "./protocolHandler";
+export * from "./protocolURIParser";

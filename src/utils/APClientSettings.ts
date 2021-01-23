@@ -1,7 +1,6 @@
-// TODO: delegate to a config?
 const HOSTNAME = "aiming.pro";
 
-export const constant = {
+export const APClientSettings = {
     hostname: HOSTNAME,
     baseUrl: "https://" + HOSTNAME + "/",
     gameBaseUrl: "https://" + HOSTNAME + "/3dGame/index.html?id=",
@@ -14,4 +13,8 @@ export const constant = {
     ACTIVITY_DESCRIPTION_FALLBACK: "General",
     // Used to parse the title
     TITLE_SEPARATOR: "|",
+    /**
+     * 1 | Informative Debugging | 2 Show non-critical warnings | 3 Show-everything
+     */
+    LOG_LEVEL: 3
 };

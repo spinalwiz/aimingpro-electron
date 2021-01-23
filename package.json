@@ -15,15 +15,15 @@
         "publish": "npm run build && electron-builder -p 'always'"
     },
     "keywords": [],
-    "author": "Insigh Aiming Ltd.",
+    "author": "Insight Aiming Ltd.",
     "license": "CC0-1.0",
     "devDependencies": {
         "@types/discord-rpc": "^3.0.4",
-        "electron": "^11.0.3",
-        "electron-builder": "^22.9.1",
+        "electron": "^11.2.1",
+        "electron-builder": "^22.10.4",
         "prettier": "^2.2.1",
-        "tslint": "^6.1.2",
-        "typescript": "^3.9.5"
+        "tslint": "^6.1.3",
+        "typescript": "^4.1.3"
     },
     "dependencies": {
         "discord-rpc": "^3.1.4",
@@ -75,7 +75,10 @@
             "deleteAppDataOnUninstall": true
         },
         "mac": {
-            "category": "public.app-category.games"
+            "category": "public.app-category.games",
+            "target": [
+                "dmg"
+            ]
         },
         "portable": {
             "artifactName": "Official Aiming.pro Desktop Client"

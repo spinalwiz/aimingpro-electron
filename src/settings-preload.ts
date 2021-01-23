@@ -27,7 +27,7 @@ window.addEventListener(
             },
             onChange: (data: any) => {
                 ipcRenderer.send("settings-changed", data);
-            },
+            }
         });
 
         document.dispatchEvent(new CustomEvent("PRELOAD-READY"));

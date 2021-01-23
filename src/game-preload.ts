@@ -5,7 +5,7 @@ import { parsePageFromTitle } from "./utils";
 const gameActivity = (status: GameStatusUpdate) => {
     const activity: DiscordActivity = {
         title: status.gameName,
-        description: String(`Current HS: ${status.highScore.toString()}`),
+        description: String(`Current HS: ${status.highScore.toString()}`)
     };
 
     // Send the activity-update
@@ -16,7 +16,7 @@ const browseActivity = () => {
     // Default activity if window is closed
     const activity: DiscordActivity = {
         title: "Browsing",
-        description: parsePageFromTitle(document.title),
+        description: parsePageFromTitle(document.title)
     };
     // Send the activity-update
     ipcRenderer.send("activity-update", activity);
@@ -29,7 +29,7 @@ window.addEventListener(
     () => {
 
         // IF GAME PAGE
-        if(typeof (window as any).gameVue === "object"){
+        if (typeof (window as any).gameVue === "object") {
             // Pointer lock fix
             document.body.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") {
@@ -39,7 +39,7 @@ window.addEventListener(
                     }
                 }
             });
-        // IF NOT GAME PAGE
+            // IF NOT GAME PAGE
         } else {
             // let the controller know and update activity
             browseActivity();
@@ -55,10 +55,8 @@ window.addEventListener(
             }
         );
 
-        // If modal is closed let the controller now and update the activity
-        window.addEventListener("game-modal-closed", () => {
-            browseActivity();
-            ipcRenderer.send("gamewindow", GameState.Closed);
+        ipcRenderer.addListener('notify-user', (...args) => {
+            console.log(args);
         });
 
         // If a game has started
