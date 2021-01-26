@@ -36,6 +36,7 @@ export class PreloadQueue {
     public static start(eventNames: string[]): PreloadQueue {
         if (!PreloadQueue.instance) {
             this.instance = new PreloadQueue(eventNames);
+            return this.instance;
         }
 
         return this.instance;

@@ -2,8 +2,10 @@ import { DatabaseSchema, DataStore } from "../types";
 
 /* SettingsList */
 import * as ElectronStore from "electron-store";
+import { injectable } from "inversify";
 
-export class AimingproElectronStore implements DataStore {
+@injectable()
+export class AimingproElectronStore implements DataStore<DatabaseSchema> {
     private electronStore: ElectronStore;
     private schema: DatabaseSchema;
 

@@ -1,14 +1,15 @@
 import * as RPC from "discord-rpc";
-import { ipcMain } from "electron";
 import { DiscordActivity } from "../types";
+import { APDiscord } from "../types/services";
 import { APClientSettings, consoleLogger } from "../utils";
+import { injectable } from "inversify";
 
-export class DiscordRPC {
-    private static instance: DiscordRPC;
+@injectable()
+export class DiscordRPC implements APDiscord {
     private rpc: RPC.Client;
     private connected: boolean;
 
-    private constructor() {
+    public constructor() {
         this.connected = false;
 
         try {
@@ -18,14 +19,6 @@ export class DiscordRPC {
         }
 
         this.init();
-    }
-
-    public static getInstance() {
-        if (!DiscordRPC.instance) {
-            this.instance = new DiscordRPC();
-        }
-
-        return this.instance;
     }
 
     updateActivity(activity: DiscordActivity): void {
@@ -45,20 +38,13 @@ export class DiscordRPC {
     private init() {
         this.rpc.on("ready", () => {
             // Only attach listeners once user is logged in
-            this.attachEventListeners();
             this.connected = true;
+            consoleLogger.log("DiscordRPC is connected");
         });
 
         // Login (ready event is fired after this)
         this.rpc.login({
             clientId: APClientSettings.DISCORD_CLIENTID
         }).catch(consoleLogger.warn);
-    }
-
-    private attachEventListeners() {
-        /* Initialize activity updater */
-        ipcMain.on("activity-update", (e, arg: DiscordActivity) => {
-            if (this.connected) this.updateActivity(arg);
-        });
     }
 }

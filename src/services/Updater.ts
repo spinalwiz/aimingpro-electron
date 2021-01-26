@@ -3,8 +3,24 @@ import { autoUpdater } from "electron-updater";
 import * as isDev from "electron-is-dev";
 
 export class Updater {
+    private static instance: Updater;
+
     public constructor() {
         this.attachEventListeners();
+    }
+
+    public static start(): Updater {
+        if (!Updater.instance) {
+            this.instance = new Updater();
+            return this.instance;
+        } else {
+            return this.instance;
+        }
+    }
+
+    public static close() {
+        autoUpdater.removeAllListeners();
+        if (this.instance) this.instance = null;
     }
 
     check() {

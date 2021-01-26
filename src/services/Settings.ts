@@ -1,17 +1,15 @@
 import { DatabaseSchema, DataStore, KeybindList, SettingsList } from "../types";
-import { AimingproElectronStore } from "./AimingproElectronStore";
 import { validator } from "../utils";
 import { defaultSettings } from "../schemas";
 import { app, clipboard, ipcMain } from "electron";
+import { ClientSettingsAPI, ServiceTypes } from "../types/services";
+import { inject, injectable } from "inversify";
 
-export class Settings {
-    private static instance: Settings;
-    private store: DataStore;
-    private shouldUseElectron = true;
-
-    private constructor() {
-        // For future purposes we might want other stores
-        if (this.shouldUseElectron) this.store = new AimingproElectronStore();
+@injectable()
+export class Settings implements ClientSettingsAPI<DatabaseSchema> {
+    public constructor(
+        @inject(ServiceTypes.DataStore) private store: DataStore<DatabaseSchema>
+    ) {
         this.store.load();
         // If store is not initialized set it to the default schema
         if (!this.isInitialized()) this.setDefault();
@@ -19,14 +17,6 @@ export class Settings {
         if (!this.isValid()) this.repair();
 
         this.initEvents();
-    }
-
-    public static getInstance() {
-        if (!Settings.instance) {
-            this.instance = new Settings();
-        }
-
-        return this.instance;
     }
 
     public setAll(schema: DatabaseSchema) {

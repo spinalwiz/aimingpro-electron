@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "module": "commonjs",
         "noImplicitAny": true,
         "sourceMap": true,
         "outDir": "./dist/",
         "baseUrl": "./src/",
         "target": "ES2016",
+        "types": ["reflect-metadata"],
         "paths": {
             "*": ["node_modules/*"]
         }

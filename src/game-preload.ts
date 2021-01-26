@@ -2,6 +2,25 @@ import { ipcRenderer } from "electron";
 import { DiscordActivity, GameState, GameStatusUpdate } from "./types";
 import { parsePageFromTitle } from "./utils";
 
+
+// All of the Node.js APIs are available in the preload process.
+// It has the same sandbox as a Chrome extension.
+window.addEventListener("DOMContentLoaded", () => {
+    const replaceText = (selector: string, text: string) => {
+        const element = document.getElementById(selector);
+        if (element) {
+            element.innerText = text;
+        }
+    };
+
+    for (const type of ["chrome", "node", "electron"]) {
+        replaceText(`${type}-version`, (process.versions as any)[type]);
+    }
+
+    console.log("GAME PRELOAD!!");
+});
+
+
 const gameActivity = (status: GameStatusUpdate) => {
     const activity: DiscordActivity = {
         title: status.gameName,
@@ -22,8 +41,7 @@ const browseActivity = () => {
     ipcRenderer.send("activity-update", activity);
 };
 
-// All of the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
+
 window.addEventListener(
     "DOMContentLoaded",
     () => {
@@ -55,7 +73,12 @@ window.addEventListener(
             }
         );
 
-        ipcRenderer.addListener('notify-user', (...args) => {
+        window.addEventListener("game-modal-closed", () => {
+            browseActivity();
+            ipcRenderer.send("gamewindow", GameState.Closed);
+        });
+
+        ipcRenderer.addListener("notify-user", (...args) => {
             console.log(args);
         });
 

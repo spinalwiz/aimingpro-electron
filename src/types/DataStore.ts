@@ -15,14 +15,14 @@ export interface DatabaseSchema {
     keybinds: KeybindList;
 }
 
-export interface DataStore {
+export interface DataStore<T> {
     readByKey(key: string): any;
 
-    read(): DatabaseSchema;
+    read(): T;
 
-    store(settings: DatabaseSchema): void;
+    store(settings: T): void;
 
-    set(key: keyof DatabaseSchema, value: any): void;
+    set(category: keyof T, property?: string, value?: any): void;
 
     load(): void;
 

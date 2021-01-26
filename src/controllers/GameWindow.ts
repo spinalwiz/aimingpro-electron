@@ -2,13 +2,18 @@ import { app, BrowserWindow, BrowserWindowConstructorOptions, ipcMain, Menu, ses
 import * as path from "path";
 import { mainDropDownMenu } from "../schemas";
 import { APClientSettings, consoleLogger, osHelper } from "../utils";
-import { Settings } from "../services";
-import { APBrowserWindow, GameState } from "../types";
+import { APBrowserWindow, DatabaseSchema, DiscordActivity, GameState } from "../types";
+import { inject, injectable } from "inversify";
+import { APDiscord, ClientSettingsAPI, ServiceTypes } from "../types/services";
 
+@injectable()
 export class GameWindow implements APBrowserWindow {
     private readonly browserWindow: BrowserWindow;
 
-    constructor() {
+    constructor(
+        @inject(ServiceTypes.ClientSettingsAPI) private _settings: ClientSettingsAPI<DatabaseSchema>,
+        @inject(ServiceTypes.APDiscord) private _discord: APDiscord
+    ) {
         const browserOptions: BrowserWindowConstructorOptions = {
             /* Hide windows by default */
             show: false,
@@ -16,7 +21,8 @@ export class GameWindow implements APBrowserWindow {
             titleBarStyle: "default",
             webPreferences: {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
-                contextIsolation: false
+                contextIsolation: false,
+                nodeIntegration: true
             }
         };
 
@@ -97,12 +103,6 @@ export class GameWindow implements APBrowserWindow {
                 ) {
                     this.browserWindow.webContents.openDevTools();
                 }
-
-                /*
-      // Temporarily to open settings
-      if (input.control && input.shift && input.key.toLowerCase() === "n") {
-        ipcMain.emit('open-settings');
-      }*/
             }
         );
     }
@@ -111,10 +111,11 @@ export class GameWindow implements APBrowserWindow {
     private initEvents() {
         // If the game window is closed simulate window-all-closed
         this.browserWindow.on("close", () => {
+            this._discord.clear();
             app.emit("window-all-closed");
         });
 
-        this.browserWindow.webContents.on('new-window', (e, url) => {
+        this.browserWindow.webContents.on("new-window", (e, url) => {
             e.preventDefault();
             shell.openExternal(url);
         });
@@ -132,12 +133,18 @@ export class GameWindow implements APBrowserWindow {
 
         /* automatic fullscreen on game screen | Also hide menu bars automatically */
         ipcMain.on("gamewindow", (e, arg: GameState) => {
-            const settings = Settings.getInstance().getSettings();
+            console.log(this._settings.getAll());
+
+            const settings = this._settings.getSettings();
             // Fullscreen on gamestart if enabled
             if (settings.fullscreenOnGameStart)
                 this.browserWindow.setFullScreen(arg === GameState.Opened);
             // Show menu bar if game is not opened
             this.browserWindow.setMenuBarVisibility(arg !== GameState.Opened);
+        });
+
+        ipcMain.on("activity-update", (e, arg: DiscordActivity) => {
+            this._discord.updateActivity(arg);
         });
     }
 
