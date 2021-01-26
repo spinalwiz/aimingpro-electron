@@ -1,8 +1,9 @@
 import { app, ipcMain, Menu } from "electron";
 import { osHelper } from "../utils";
+import { OSType } from "../types";
 
 export const mainDropDownMenu = Menu.buildFromTemplate([
-    (osHelper === "mac") ? {
+    (osHelper === OSType.MAC) ? {
         label: app.name,
         submenu: [
             { role: "about" },

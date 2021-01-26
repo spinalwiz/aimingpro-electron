@@ -2,7 +2,7 @@ import { app, BrowserWindow, BrowserWindowConstructorOptions, ipcMain, Menu, ses
 import * as path from "path";
 import { mainDropDownMenu } from "../schemas";
 import { APClientSettings, consoleLogger, osHelper } from "../utils";
-import { APBrowserWindow, DatabaseSchema, DiscordActivity, GameState } from "../types";
+import { APBrowserWindow, DatabaseSchema, DiscordActivity, GameState, OSType } from "../types";
 import { inject, injectable } from "inversify";
 import { APDiscord, ClientSettingsAPI, ServiceTypes } from "../types/services";
 
@@ -150,7 +150,7 @@ export class GameWindow implements APBrowserWindow {
 
     private initMenu() {
         // Mac needs a different kind of menu
-        if (osHelper === "mac") {
+        if (osHelper === OSType.MAC) {
             Menu.setApplicationMenu(mainDropDownMenu);
         } else {
             this.browserWindow.setMenu(mainDropDownMenu);

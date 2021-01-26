@@ -1,1 +1,5 @@
-export type osType = "win" | "mac" | "linux";
+export enum OSType {
+    WIN,
+    MAC,
+    LINUX
+}
