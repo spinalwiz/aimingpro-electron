@@ -150,7 +150,7 @@ export class GameWindow implements APBrowserWindow {
 
     private initMenu() {
         // Mac needs a different kind of menu
-        if (osHelper() === "mac") {
+        if (osHelper === "mac") {
             Menu.setApplicationMenu(mainDropDownMenu);
         } else {
             this.browserWindow.setMenu(mainDropDownMenu);
