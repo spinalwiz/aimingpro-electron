@@ -28,7 +28,7 @@ export const modalPointerlockFix = (document: Document): boolean => {
     }
 }
 
-export const pointerLockFix = (document: Document) => {
+export const pointerLockFix = (document: Document): void => {
     document.body.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
             if (document.pointerLockElement) {
@@ -38,10 +38,3 @@ export const pointerLockFix = (document: Document) => {
         }
     });
 }
-
-// let tries = 0;
-//
-// const injection = setInterval(() => {
-//                if(tries >= 3 || modalPointerlockFix(document)) clearInterval(injection);
-//                tries++;
-//            }, 250);

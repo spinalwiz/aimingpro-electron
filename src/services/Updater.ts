@@ -18,12 +18,12 @@ export class Updater {
         }
     }
 
-    public static close() {
+    public static close(): void {
         autoUpdater.removeAllListeners();
         if (this.instance) this.instance = null;
     }
 
-    check() {
+    check(): void {
         // If on dev don't update
         if (isDev) {
             ipcMain.emit("update-finished");

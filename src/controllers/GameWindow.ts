@@ -42,7 +42,7 @@ export class GameWindow implements APBrowserWindow {
         });
     }
 
-    init() {
+    init(): void {
         this.browserWindow.loadURL(APClientSettings.baseUrl).catch(consoleLogger.critical);
 
         // load maximzed
@@ -108,7 +108,7 @@ export class GameWindow implements APBrowserWindow {
     }
 
     // Setup Event Handlers
-    private initEvents() {
+    private initEvents(): void {
         // If the game window is closed simulate window-all-closed
         this.browserWindow.on("close", () => {
             this._discord.clear();
@@ -133,8 +133,6 @@ export class GameWindow implements APBrowserWindow {
 
         /* automatic fullscreen on game screen | Also hide menu bars automatically */
         ipcMain.on("gamewindow", (e, arg: GameState) => {
-            console.log(this._settings.getAll());
-
             const settings = this._settings.getSettings();
             // Fullscreen on gamestart if enabled
             if (settings.fullscreenOnGameStart)
@@ -148,7 +146,7 @@ export class GameWindow implements APBrowserWindow {
         });
     }
 
-    private initMenu() {
+    private initMenu(): void {
         // Mac needs a different kind of menu
         if (osHelper === OSType.MAC) {
             Menu.setApplicationMenu(mainDropDownMenu);

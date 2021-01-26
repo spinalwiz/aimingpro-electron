@@ -2,7 +2,7 @@ import { DiscordActivity, GameStatusUpdate } from "../types";
 import { ipcRenderer } from "electron";
 import { parsePageFromTitle } from "./parsePageFromTitle";
 
-export const gameActivity = (status: GameStatusUpdate) => {
+export const gameActivity = (status: GameStatusUpdate): void => {
     const activity: DiscordActivity = {
         title: status.gameName,
         description: String(`Current HS: ${status.highScore.toString()}`)
@@ -12,7 +12,7 @@ export const gameActivity = (status: GameStatusUpdate) => {
     ipcRenderer.send("activity-update", activity);
 };
 
-export const browseActivity = () => {
+export const browseActivity = (): void => {
     // Default activity if window is closed
     const activity: DiscordActivity = {
         title: "Browsing",

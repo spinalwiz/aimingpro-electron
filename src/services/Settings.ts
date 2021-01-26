@@ -19,7 +19,7 @@ export class Settings implements ClientSettingsAPI<DatabaseSchema> {
         this.initEvents();
     }
 
-    public setAll(schema: DatabaseSchema) {
+    public setAll(schema: DatabaseSchema): void {
         this.store.store(schema);
         this.store.save();
     }
@@ -32,7 +32,7 @@ export class Settings implements ClientSettingsAPI<DatabaseSchema> {
         return this.store.readByKey("settings");
     }
 
-    public setSettings(key: keyof SettingsList, val: any) {
+    public setSettings(key: keyof SettingsList, val: any): void {
         const temp = this.store.readByKey("settings");
         // Check if key is not undefined and the key matches the type the default schema
         if (
@@ -48,7 +48,7 @@ export class Settings implements ClientSettingsAPI<DatabaseSchema> {
         return this.store.readByKey("keybinds");
     }
 
-    public setDefault() {
+    public setDefault(): void {
         this.store.store(defaultSettings);
         this.store.save();
     }
@@ -58,14 +58,14 @@ export class Settings implements ClientSettingsAPI<DatabaseSchema> {
     }
 
     private isValid(): boolean {
-        return validator.deepCompareObjects(this.getAll(), defaultSettings);
+        return validator.deepCompareObjects<DatabaseSchema>(this.getAll(), defaultSettings);
     }
 
     private repair() {
-        const fixedTemp = validator.fixDatabase(defaultSettings, this.getAll());
+        const fixedTemp = validator.fixDatabase<DatabaseSchema>(defaultSettings, this.getAll());
 
         // If it's valid after repair store it to database
-        if (validator.deepCompareObjects(defaultSettings, fixedTemp)) {
+        if (validator.deepCompareObjects<DatabaseSchema>(defaultSettings, fixedTemp)) {
             this.setAll(fixedTemp);
             // Set to default if not valid
         } else {

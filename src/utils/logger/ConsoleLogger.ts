@@ -9,26 +9,26 @@ export const consoleLogger = {
      * Logs the message. Mostly used for informative debugging
      * @param msg
      */
-    log(...msg: any): void {
+    log(...msg: unknown[]): void {
         // tslint:disable-next-line:no-console
-        if (APClientSettings.LOG_LEVEL >= 1) console.log("Log: ", msg);
+        if (APClientSettings.LOG_LEVEL >= 3) console.log("Log: ", msg.join('|'));
     },
 
     /**
      * Warns the user. For non-critical failures.
      * @param msg
      */
-    warn(...msg: any): void {
+    warn(...msg: unknown[]): void {
         // tslint:disable-next-line:no-console
-        if (APClientSettings.LOG_LEVEL >= 2) console.warn("\x1b[33mWarn: ", msg, "\x1b[0m");
+        if (APClientSettings.LOG_LEVEL >= 2) console.warn("\x1b[33mWarn: ", msg.join('|'), "\x1b[0m");
     },
 
     /**
      * Logs critical failures
      * @param msg
      */
-    critical(...msg: any): void {
+    critical(...msg: unknown[]): void {
         // tslint:disable-next-line:no-console
-        if (APClientSettings.LOG_LEVEL >= 3) console.error("\x1b[31mCritical:", msg, "\x1b[0m");
+        if (APClientSettings.LOG_LEVEL >= 1) console.error("\x1b[31mCritical:", msg.join('|'), "\x1b[0m");
     }
 };

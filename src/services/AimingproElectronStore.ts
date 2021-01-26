@@ -22,7 +22,7 @@ export class AimingproElectronStore implements DataStore<DatabaseSchema> {
         return this.schema[key as keyof DatabaseSchema];
     }
 
-    read() {
+    read(): DatabaseSchema {
         return this.schema;
     }
 
@@ -36,7 +36,7 @@ export class AimingproElectronStore implements DataStore<DatabaseSchema> {
     }
 
     /* debugging purposes */
-    public display() {
+    public display(): void {
         console.log(this.schema);
     }
 

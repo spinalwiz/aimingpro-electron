@@ -168,7 +168,7 @@ class AimingProApp {
             if (prot && prot.action === "game") this.windows.game.loadGame(+prot.parameter);
             if (prot && prot.action === "playlist") this.windows.game.loadPlaylist(+prot.parameter);
         }
-    };
+    }
 }
 
 const aimingProApp = new AimingProApp(

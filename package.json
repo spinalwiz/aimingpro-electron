@@ -6,7 +6,7 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
-        "lint": "tslint -c tslint.json -p tsconfig.json",
+        "lint": "eslint -c .eslintrc.json ./src",
         "pretty": "prettier --write \"./**/*.{ts,json}\"",
         "start": "npm run build && electron ./dist/main.js --dev",
         "start-nondev": "npm run build && electron ./dist/main.js",
@@ -19,23 +19,22 @@
     "license": "CC0-1.0",
     "devDependencies": {
         "@types/discord-rpc": "^3.0.4",
+        "@typescript-eslint/eslint-plugin": "^4.14.1",
+        "@typescript-eslint/parser": "^4.14.1",
         "electron": "^11.2.1",
         "electron-builder": "^22.10.4",
+        "eslint": "^7.18.0",
         "prettier": "^2.2.1",
-        "tslint": "^6.1.3",
-        "typescript": "^4.1.3",
-        "typescript-json-schema": "^0.48.0"
+        "typescript": "^4.1.3"
     },
     "dependencies": {
         "discord-rpc": "^3.1.4",
-        "electron-debug": "^3.1.0",
         "electron-is-dev": "^1.2.0",
         "electron-store": "^7.0.0",
         "electron-updater": "^4.3.5",
         "inversify": "^5.0.5",
-        "json-schema-typed": "^7.0.3",
-        "lowdb": "^1.0.0",
         "reflect-metadata": "^0.1.13",
+        "register-scheme": "github:devsnek/node-register-scheme",
         "v8-compile-cache": "^2.2.0"
     },
     "build": {

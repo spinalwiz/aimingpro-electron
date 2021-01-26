@@ -5,7 +5,7 @@
  * @param a Object A
  * @param b Object B
  */
-const deepCompareObjects = (a: any, b: any) => {
+const deepCompareObjects = <T>(a: T, b: T): boolean => {
     // Don't even look a this ugly piece of art
     for (const aKey in a) {
         let aInb = false;
@@ -36,7 +36,7 @@ const deepCompareObjects = (a: any, b: any) => {
  * @param ref Reference Object
  * @param src Source to be fixed
  */
-const fixDatabase = (ref: any, src: any) => {
+const fixDatabase = <T>(ref: T, src: T): T  => {
     for (const aKey in ref) {
         for (const bKey in src) {
             // TODO: add another loop over A which adds missing fields

@@ -45,7 +45,7 @@ export class SplashWindow implements APBrowserWindow {
         });
     }
 
-    init() {
+    init(): void {
         /* init triggered */
         this.browserWindow.loadFile(
             path.join(__dirname, "../views/splash.html")

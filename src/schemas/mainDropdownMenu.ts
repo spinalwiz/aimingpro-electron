@@ -107,7 +107,7 @@ export const mainDropDownMenu = Menu.buildFromTemplate([
             {
                 label: "Quit",
                 accelerator: "CTRL+Q",
-                click: (_) => ipcMain.emit("force-close-app")
+                click: () => ipcMain.emit("force-close-app")
             }
         ]
     }

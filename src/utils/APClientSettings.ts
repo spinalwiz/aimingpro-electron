@@ -14,7 +14,7 @@ export const APClientSettings = {
     // Used to parse the title
     TITLE_SEPARATOR: "|",
     /**
-     * 1 | Informative Debugging | 2 Show non-critical warnings | 3 Show-everything
+     * 3 | Informative Debugging | 2 Show non-critical warnings | 1 Show-everything (critical and higher)
      */
-    LOG_LEVEL: 3
+    LOG_LEVEL: 2
 };
