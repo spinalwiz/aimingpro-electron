@@ -15,7 +15,7 @@ export const mainDropDownMenu = Menu.buildFromTemplate([
             { type: "separator" },
             { role: "quit" }
         ]
-    } : {},
+    }:{ role: null },
     {
         label: "View",
         submenu: [
