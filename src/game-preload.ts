@@ -10,6 +10,7 @@ window.addEventListener(
         // IF GAME PAGE
         if (typeof (window as any).gameVue === "object") {
             pointerLockFix(document);
+            ipcRenderer.send("gamewindow", GameState.Opened);
         } else {
             // let the controller know and update activity
             browseActivity();
@@ -39,9 +40,9 @@ window.addEventListener(
 
                 let tries = 0;
                 const injection = setInterval(() => {
-                    if (tries > 3 || modalPointerlockFix(document)) clearInterval(injection);
+                    if (tries > 4 || modalPointerlockFix(document)) clearInterval(injection);
                     tries++;
-                }, 250);
+                }, 200);
             }
         });
     },
