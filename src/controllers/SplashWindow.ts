@@ -18,7 +18,6 @@ export class SplashWindow implements APBrowserWindow {
             width: 500,
             titleBarStyle: "hidden",
             webPreferences: {
-                nodeIntegration: true,
                 contextIsolation: false,
                 preload: path.join(__dirname, "../../dist/splash-preload.js"),
             }

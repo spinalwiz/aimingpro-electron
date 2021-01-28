@@ -16,8 +16,6 @@ export class Updater {
 
         this.attachEventListeners();
 
-        autoUpdater.allowPrerelease = true;
-
         autoUpdater.checkForUpdates().catch((e) => {
             // tslint:disable-next-line: no-console
             console.error(`An error has occured in the updater: ${e}`);
