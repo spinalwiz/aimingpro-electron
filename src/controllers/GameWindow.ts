@@ -43,6 +43,13 @@ export class GameWindow implements APBrowserWindow {
     }
 
     init(): void {
+        this.browserWindow.webContents.setUserAgent(
+            this.browserWindow.webContents.getUserAgent() +
+                APClientSettings.userAgentSuffix
+        );
+
+        console.log(this.browserWindow.webContents.getUserAgent());
+
         this.browserWindow.loadURL(APClientSettings.baseUrl).catch(consoleLogger.critical);
 
         // load maximzed
