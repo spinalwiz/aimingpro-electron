@@ -1,9 +1,5 @@
 import { ipcRenderer } from "electron";
 
-const updateLoadingDescription = (d: string) => {
-    document.querySelector("#loading-description").textContent = d;
-};
-
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 window.addEventListener(
@@ -21,7 +17,7 @@ window.addEventListener(
         }
 
         ipcRenderer.on("loadingscreen-status", (e, status: string) => {
-            updateLoadingDescription(status);
+            document.querySelector("#loading-description").textContent = status;
         });
     },
     false

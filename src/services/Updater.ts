@@ -1,34 +1,22 @@
-import { ipcMain } from "electron";
+import { AutoUpdater, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import * as isDev from "electron-is-dev";
 
 export class Updater {
-    private static instance: Updater;
-
-    public constructor() {
-        this.attachEventListeners();
-    }
-
-    public static start(): Updater {
-        if (!Updater.instance) {
-            this.instance = new Updater();
-            return this.instance;
-        } else {
-            return this.instance;
-        }
-    }
-
     public static close(): void {
         autoUpdater.removeAllListeners();
-        if (this.instance) this.instance = null;
     }
 
-    check(): void {
+    public static check(): void {
         // If on dev don't update
         if (isDev) {
             ipcMain.emit("update-finished");
             return;
         }
+
+        this.attachEventListeners();
+
+        autoUpdater.allowPrerelease = true;
 
         autoUpdater.checkForUpdates().catch((e) => {
             // tslint:disable-next-line: no-console
@@ -37,14 +25,15 @@ export class Updater {
         });
     }
 
-    private attachEventListeners() {
+    private static attachEventListeners() {
         // Checking for updates
         autoUpdater.on("checking-for-update", () => {
             ipcMain.emit("loadingscreen-status", "Checking for Updates...");
         });
 
         // Show error message and load old app
-        autoUpdater.on("error", () => {
+        autoUpdater.on("error", (err: AutoUpdater) => {
+            console.log(err);
             ipcMain.emit("loadingscreen-status", "An Error has Occured!");
             setTimeout(() => ipcMain.emit("update-finished"), 2500);
         });

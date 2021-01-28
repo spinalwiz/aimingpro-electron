@@ -81,7 +81,8 @@
         "mac": {
             "category": "public.app-category.games",
             "target": [
-                "dmg"
+                "dmg",
+                "zip"
             ]
         },
         "portable": {

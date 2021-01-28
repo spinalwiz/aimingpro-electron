@@ -32,7 +32,7 @@ class AimingProApp {
             this.windows.splash = new SplashWindow();
 
             // Check for updates
-            Updater.start().check();
+            Updater.check();
 
             // Set windows to use aimingpro as default protocol
             if (app.setAsDefaultProtocolClient(APClientSettings.PROTOCOL_PREFIX)) consoleLogger.warn("Protocol couldn't be attached");

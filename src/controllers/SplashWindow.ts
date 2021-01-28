@@ -19,7 +19,8 @@ export class SplashWindow implements APBrowserWindow {
             titleBarStyle: "hidden",
             webPreferences: {
                 nodeIntegration: true,
-                contextIsolation: false
+                contextIsolation: false,
+                preload: path.join(__dirname, "../../dist/splash-preload.js"),
             }
         };
 
