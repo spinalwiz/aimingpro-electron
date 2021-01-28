@@ -5,3 +5,4 @@ dist/*
 !dist/icon.ico
 !dist/installer.nsh
 release
+.DS_Store
