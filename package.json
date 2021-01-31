@@ -1,6 +1,6 @@
 {
     "name": "aimingpro-client",
-    "version": "v0.0.5",
+    "version": "v0.0.7",
     "description": "The official experimental aiming.pro client",
     "main": "dist/main.js",
     "scripts": {
@@ -11,8 +11,8 @@
         "start": "npm run build && electron ./dist/main.js --dev",
         "start-nondev": "npm run build && electron ./dist/main.js",
         "pack": "npm run build && electron-builder --dir",
-        "dist": "npm run build && electron-builder",
-        "publish": "npm run build && electron-builder -p 'onTagOrDraft'"
+        "dist": "npm run build && electron-builder -mwl",
+        "publish": "npm run build && electron-builder -mwl -p 'always'"
     },
     "keywords": [],
     "author": "Insight Aiming Ltd.",
