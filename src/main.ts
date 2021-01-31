@@ -2,28 +2,18 @@ import "v8-compile-cache";
 import { app, ipcMain } from "electron";
 import { GameWindow, SplashWindow } from "./controllers";
 import { PreloadQueue, Updater } from "./services";
-import { APClientSettings, consoleLogger, container, protocolURIParser } from "./utils";
+import { APClientSettings, consoleLogger, container, isAMDCPU, osHelper, protocolURIParser } from "./utils";
 import { APDiscord, ClientSettingsAPI, ServiceTypes } from "./types/services";
 import { DatabaseSchema } from "./types";
 import { inject, injectable } from "inversify";
-import * as os from "os";
 
 @injectable()
 class AimingProApp {
     private windows: { game: GameWindow, splash: SplashWindow } = { game: null, splash: null };
-    private readonly gotTheLock: boolean;
 
     constructor(
         @inject(ServiceTypes.ClientSettingsAPI) private _settings: ClientSettingsAPI<DatabaseSchema>
     ) {
-        this.gotTheLock = app.requestSingleInstanceLock();
-
-        this.handleLock();
-        this.initEvents();
-        this.handleSwitches();
-
-        /* APP INITIALIZATION
-         */
         app.on("ready", () => {
             // This emits 'preload-finished' when all given events have fired on ipcMain which starts the GameWindows
             PreloadQueue.start(["update-finished"]);
@@ -37,24 +27,9 @@ class AimingProApp {
             // Set windows to use aimingpro as default protocol
             if (app.setAsDefaultProtocolClient(APClientSettings.PROTOCOL_PREFIX)) consoleLogger.warn("Protocol couldn't be attached");
         });
-    }
 
-    private handleLock() {
-        if (!this.gotTheLock) {
-            app.quit();
-        } else {
-            // Focus on app window if someone tried to open a second instance
-            app.on("second-instance", (e, commandLine) => {
-                // Someone tried to run a second instance, we should focus our window.
-                if (this.windows.game) {
-                    // Focus on main window if second instance is attempted
-                    if (this.windows.game.getBrowserWindow().isMinimized()) this.windows.game.getBrowserWindow().restore();
-                    this.windows.game.getBrowserWindow().focus();
-
-                    this.protocolHandler(commandLine);
-                }
-            });
-        }
+        this.handleSwitches();
+        this.initEvents();
     }
 
     private handleSwitches() {
@@ -75,7 +50,7 @@ class AimingProApp {
         if (settings.unlimitedfps) {
             app.commandLine.appendSwitch("disable-frame-rate-limit");
             /* Improve unlimited FPS performance on AMD cpus */
-            if (os.cpus()[0].model.indexOf("AMD") > -1)
+            if (isAMDCPU > -1)
                 app.commandLine.appendSwitch("enable-zero-copy");
         }
 
@@ -108,7 +83,7 @@ class AimingProApp {
         /* once preload is done run game screen */
         if (this.windows.game === null) {
             this.windows.game = new GameWindow(
-                this._settings,
+                container.get<ClientSettingsAPI<DatabaseSchema>>(ServiceTypes.ClientSettingsAPI),
                 container.get<APDiscord>(ServiceTypes.APDiscord)
             );
         }
@@ -117,11 +92,25 @@ class AimingProApp {
         this.protocolHandler(process.argv);
 
         // Get rid off splash screen
-        this.windows.splash.getBrowserWindow().close();
+        this.windows.splash.destroy()
         this.windows.splash = null;
     }
 
     private initEvents() {
+
+        /* if a second instance is created, focus on the game window */
+        app.on("second-instance", (e, commandLine) => {
+            // Someone tried to run a second instance, we should focus our window.
+            if (this.windows.game) {
+                // Focus on main window if second instance is attempted
+                if (this.windows.game.getBrowserWindow().isMinimized()) this.windows.game.getBrowserWindow().restore();
+                this.windows.game.getBrowserWindow().focus();
+            }
+
+            this.protocolHandler(commandLine);
+        });
+
+        
         /* once all elements in splash screen are loaded open game screen and close splash screen */
         ipcMain.once("preload-finished", () => {
             this.startGameWindow();
@@ -144,7 +133,12 @@ class AimingProApp {
 
         /* Quits the app if all windows are closed */
         app.on("window-all-closed", () => {
+            container.unbindAll();
             app.quit();
+        });
+
+        app.on("will-quit", () => {
+            container.unbindAll();
         });
     }
 
@@ -171,8 +165,10 @@ class AimingProApp {
     }
 }
 
-const aimingProApp = new AimingProApp(
-    /* dependencies */
-    container.get<ClientSettingsAPI<DatabaseSchema>>(ServiceTypes.ClientSettingsAPI)
-);
-export default aimingProApp;
+const gotTheLock: boolean = app.requestSingleInstanceLock();
+
+if(!gotTheLock) {
+    app.quit();
+} else {
+    new AimingProApp( container.get<ClientSettingsAPI<DatabaseSchema>>(ServiceTypes.ClientSettingsAPI) );
+}

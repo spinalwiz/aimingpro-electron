@@ -119,7 +119,7 @@ export class GameWindow implements APBrowserWindow {
         // If the game window is closed simulate window-all-closed
         this.browserWindow.on("close", () => {
             this._discord.clear();
-            app.emit("window-all-closed");
+            app.quit();
         });
 
         this.browserWindow.webContents.on("new-window", (e, url) => {

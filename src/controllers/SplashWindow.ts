@@ -65,4 +65,8 @@ export class SplashWindow implements APBrowserWindow {
     getBrowserWindow(): Electron.BrowserWindow {
         return this.browserWindow;
     }
+
+    destroy(){
+        if(this.browserWindow != null) this.browserWindow.destroy();
+    }
 }
