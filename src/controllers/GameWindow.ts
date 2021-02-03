@@ -22,7 +22,7 @@ export class GameWindow implements APBrowserWindow {
             webPreferences: {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
                 contextIsolation: false,
-                nodeIntegration: true
+                nodeIntegration: false
             }
         };
 
