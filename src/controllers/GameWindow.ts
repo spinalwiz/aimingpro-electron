@@ -17,12 +17,15 @@ export class GameWindow implements APBrowserWindow {
         const browserOptions: BrowserWindowConstructorOptions = {
             /* Hide windows by default */
             show: false,
-            frame: true,
+            frame: false,
+            width: 941,
+            height: 800,
+            fullscreen: true,
             titleBarStyle: "default",
             webPreferences: {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
                 contextIsolation: false,
-                nodeIntegration: false
+                nodeIntegration: false,
             }
         };
 

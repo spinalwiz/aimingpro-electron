@@ -2,7 +2,8 @@ const HOSTNAME = "aiming.pro";
 
 export const APClientSettings = {
     hostname: HOSTNAME,
-    baseUrl: "https://" + HOSTNAME + "/",
+    // baseUrl: "https://" + HOSTNAME + "/",
+    baseUrl: "https://" + HOSTNAME + "/app/#/trainer",
     gameBaseUrl: "https://" + HOSTNAME + "/3dGame/index.html?id=",
     // ALSO NEEDS CHANGING IN installer.nhs IF CHANGING
     PROTOCOL_PREFIX: "aimingpro",
