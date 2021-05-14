@@ -67,6 +67,9 @@ class AimingProApp {
             app.commandLine.appendSwitch("renderer-process-limit", "100");
             app.commandLine.appendSwitch("max-active-webgl-contexts", "100");
         }
+
+        // Enable unadjustedMovement (raw mouse input) for pointer lock
+        app.commandLine.appendSwitch("enable-features", "PointerLockOptions");
     }
 
     /**
