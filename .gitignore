@@ -3,6 +3,7 @@ dist/*
 !dist/views
 !dist/icons
 !dist/icon.ico
+!dist/icon.icns
 !dist/installer.nsh
 release
 *.DS_Store
