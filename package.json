@@ -1,6 +1,6 @@
 {
     "name": "aimingpro-client",
-    "version": "v1.0.0",
+    "version": "v1.0.1",
     "description": "The official experimental aiming.pro client",
     "main": "dist/main.js",
     "scripts": {
@@ -21,8 +21,8 @@
         "@types/discord-rpc": "^3.0.4",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
-        "electron": "^11.2.1",
-        "electron-builder": "^22.10.4",
+        "electron": "^16.0.5",
+        "electron-builder": "^22.14.5",
         "eslint": "^7.18.0",
         "prettier": "^2.2.1",
         "typescript": "^4.1.3"
@@ -30,8 +30,8 @@
     "dependencies": {
         "discord-rpc": "^3.1.4",
         "electron-is-dev": "^1.2.0",
-        "electron-store": "^7.0.0",
-        "electron-updater": "^4.3.5",
+        "electron-store": "^8.0.1",
+        "electron-updater": "^4.6.1",
         "inversify": "^5.0.5",
         "reflect-metadata": "^0.1.13",
         "register-scheme": "github:devsnek/node-register-scheme",
