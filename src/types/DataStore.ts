@@ -3,6 +3,8 @@ export interface SettingsList {
     fullscreenOnGameStart: boolean;
     d3d11: boolean;
     quic: boolean;
+    // This boolean is inverted
+    // vsync: true means v-sync off
     vsync: boolean;
 }
 

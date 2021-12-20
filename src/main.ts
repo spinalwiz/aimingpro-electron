@@ -86,22 +86,18 @@ class AimingProApp {
             if (isAMDCPU > -1) app.commandLine.appendSwitch("enable-zero-copy");
         }
 
-        // vsync can only be off if unlimited fps are on
-        if (settings.vsync && settings.unlimitedfps) {
-            app.commandLine.appendArgument("--disable-gpu-vsync");
+        if (settings.vsync) {
+            app.commandLine.appendSwitch("disable-gpu-vsync");
         }
 
         /* D3D11 Experimental Features. Mostly for CPU rendering.*/
         if (settings.d3d11) {
             /* Experimental Optimizations */
-            app.commandLine.appendSwitch("use-angle", "d3d9");
+            // app.commandLine.appendSwitch("use-angle", "d3d9");
             app.commandLine.appendSwitch("enable-webgl2-compute-context");
             app.commandLine.appendSwitch("renderer-process-limit", "100");
             app.commandLine.appendSwitch("max-active-webgl-contexts", "100");
         }
-
-        // Enable unadjustedMovement (raw mouse input) for pointer lock
-        app.commandLine.appendSwitch("enable-features", "PointerLockOptions");
     }
 
     /**

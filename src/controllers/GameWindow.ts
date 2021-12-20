@@ -1,8 +1,22 @@
-import { app, BrowserWindow, BrowserWindowConstructorOptions, ipcMain, Menu, session, shell } from "electron";
+import {
+    app,
+    BrowserWindow,
+    BrowserWindowConstructorOptions,
+    ipcMain,
+    Menu,
+    session,
+    shell,
+} from "electron";
 import * as path from "path";
-import { mainDropDownMenu } from "../schemas";
+import { createMainDropDownMenu } from "../schemas";
 import { APClientSettings, consoleLogger, osHelper } from "../utils";
-import { APBrowserWindow, DatabaseSchema, DiscordActivity, GameState, OSType } from "../types";
+import {
+    APBrowserWindow,
+    DatabaseSchema,
+    DiscordActivity,
+    GameState,
+    OSType,
+} from "../types";
 import { inject, injectable } from "inversify";
 import { APDiscord, ClientSettingsAPI, ServiceTypes } from "../types/services";
 
@@ -11,7 +25,8 @@ export class GameWindow implements APBrowserWindow {
     private readonly browserWindow: BrowserWindow;
 
     constructor(
-        @inject(ServiceTypes.ClientSettingsAPI) private _settings: ClientSettingsAPI<DatabaseSchema>,
+        @inject(ServiceTypes.ClientSettingsAPI)
+        private _settings: ClientSettingsAPI<DatabaseSchema>,
         @inject(ServiceTypes.APDiscord) private _discord: APDiscord
     ) {
         const browserOptions: BrowserWindowConstructorOptions = {
@@ -22,11 +37,12 @@ export class GameWindow implements APBrowserWindow {
             webPreferences: {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
                 contextIsolation: false,
-                nodeIntegration: false
-            }
+                nodeIntegration: false,
+            },
         };
 
-        if (this.browserWindow == null) this.browserWindow = new BrowserWindow(browserOptions);
+        if (this.browserWindow == null)
+            this.browserWindow = new BrowserWindow(browserOptions);
 
         this.init();
         // Make sure window is destroyed when closed (NOT MINIMZED).
@@ -50,7 +66,9 @@ export class GameWindow implements APBrowserWindow {
 
         console.log(this.browserWindow.webContents.getUserAgent());
 
-        this.browserWindow.loadURL(APClientSettings.baseUrl).catch(consoleLogger.critical);
+        this.browserWindow
+            .loadURL(APClientSettings.baseUrl)
+            .catch(consoleLogger.critical);
 
         // load maximzed
         this.browserWindow.maximize();
@@ -63,7 +81,7 @@ export class GameWindow implements APBrowserWindow {
     // Check if user is logged in by looking for specific cookies
     async isLoggedIn(): Promise<boolean> {
         const cookies = await session.defaultSession.cookies.get({
-            url: APClientSettings.baseUrl
+            url: APClientSettings.baseUrl,
         });
 
         for (const i in cookies) {
@@ -89,7 +107,11 @@ export class GameWindow implements APBrowserWindow {
         if (isNaN(playlistID)) return;
         this.isLoggedIn().then((e) => {
             // if not logged in redirect to login page
-            const href = e ? APClientSettings.baseUrl + "#/training/playlists/play/" + playlistID : APClientSettings.baseUrl + "login";
+            const href = e
+                ? APClientSettings.baseUrl +
+                  "#/training/playlists/play/" +
+                  playlistID
+                : APClientSettings.baseUrl + "login";
             this.browserWindow.loadURL(href).catch(consoleLogger.warn);
         });
     }
@@ -131,9 +153,11 @@ export class GameWindow implements APBrowserWindow {
             this.browserWindow.webContents.session.clearCache().catch(() => {
                 consoleLogger.warn("Could not clear cache");
             });
-            this.browserWindow.webContents.session.clearStorageData().catch(() => {
-                consoleLogger.warn("Could not clear storage data");
-            });
+            this.browserWindow.webContents.session
+                .clearStorageData()
+                .catch(() => {
+                    consoleLogger.warn("Could not clear storage data");
+                });
 
             this.browserWindow.webContents.reload();
         });
@@ -154,11 +178,12 @@ export class GameWindow implements APBrowserWindow {
     }
 
     private initMenu(): void {
+        const menu = createMainDropDownMenu(this._settings.getSettings());
         // Mac needs a different kind of menu
         if (osHelper === OSType.MAC) {
-            Menu.setApplicationMenu(mainDropDownMenu);
+            Menu.setApplicationMenu(menu);
         } else {
-            this.browserWindow.setMenu(mainDropDownMenu);
+            this.browserWindow.setMenu(menu);
         }
     }
 }

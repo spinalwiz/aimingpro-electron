@@ -93,7 +93,6 @@ export class Settings implements ClientSettingsAPI<DatabaseSchema> {
         /* Toggle vsync */
         ipcMain.on("vsync", (e) => {
             this.setSettings("vsync", e);
-            if ((e as any) === true) this.setSettings("unlimitedfps", false);
             app.relaunch();
             app.exit();
         });
