@@ -16,5 +16,11 @@ export const APClientSettings = {
     /**
      * 3 | Informative Debugging | 2 Show non-critical warnings | 1 Show-everything (critical and higher)
      */
-    LOG_LEVEL: 2
+    LOG_LEVEL: 2,
+    // Origins that are not allowed will be open in a separate browser
+    ALLOWED_ORIGIN: [
+        "https://" + HOSTNAME,
+        "https://dev." + HOSTNAME,
+        "http://127.0.0.1",
+    ],
 };

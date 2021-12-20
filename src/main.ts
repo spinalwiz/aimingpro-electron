@@ -1,18 +1,28 @@
 import "v8-compile-cache";
-import { app, ipcMain } from "electron";
+import { app, ipcMain, shell } from "electron";
 import { GameWindow, SplashWindow } from "./controllers";
 import { PreloadQueue, Updater } from "./services";
-import { APClientSettings, consoleLogger, container, isAMDCPU, osHelper, protocolURIParser } from "./utils";
+import {
+    APClientSettings,
+    consoleLogger,
+    container,
+    isAMDCPU,
+    protocolURIParser,
+} from "./utils";
 import { APDiscord, ClientSettingsAPI, ServiceTypes } from "./types/services";
 import { DatabaseSchema } from "./types";
 import { inject, injectable } from "inversify";
 
 @injectable()
 class AimingProApp {
-    private windows: { game: GameWindow, splash: SplashWindow } = { game: null, splash: null };
+    private windows: { game: GameWindow; splash: SplashWindow } = {
+        game: null,
+        splash: null,
+    };
 
     constructor(
-        @inject(ServiceTypes.ClientSettingsAPI) private _settings: ClientSettingsAPI<DatabaseSchema>
+        @inject(ServiceTypes.ClientSettingsAPI)
+        private _settings: ClientSettingsAPI<DatabaseSchema>
     ) {
         app.on("ready", () => {
             // This emits 'preload-finished' when all given events have fired on ipcMain which starts the GameWindows
@@ -25,7 +35,30 @@ class AimingProApp {
             Updater.check();
 
             // Set windows to use aimingpro as default protocol
-            if (app.setAsDefaultProtocolClient(APClientSettings.PROTOCOL_PREFIX)) consoleLogger.warn("Protocol couldn't be attached");
+            if (
+                app.setAsDefaultProtocolClient(APClientSettings.PROTOCOL_PREFIX)
+            )
+                consoleLogger.warn("Protocol couldn't be attached");
+        });
+
+        // Open external links in user's main browser
+        app.on("web-contents-created", (event, contents) => {
+            contents.on("will-navigate", (event, navigationUrl) => {
+                const parsedUrl = new URL(navigationUrl);
+
+                if (
+                    !APClientSettings.ALLOWED_ORIGIN.includes(parsedUrl.origin)
+                ) {
+                    event.preventDefault();
+                    if (
+                        ["https:", "http:", "mailto:"].includes(
+                            parsedUrl.protocol
+                        )
+                    ) {
+                        shell.openExternal(navigationUrl);
+                    }
+                }
+            });
         });
 
         this.handleSwitches();
@@ -50,8 +83,7 @@ class AimingProApp {
         if (settings.unlimitedfps) {
             app.commandLine.appendSwitch("disable-frame-rate-limit");
             /* Improve unlimited FPS performance on AMD cpus */
-            if (isAMDCPU > -1)
-                app.commandLine.appendSwitch("enable-zero-copy");
+            if (isAMDCPU > -1) app.commandLine.appendSwitch("enable-zero-copy");
         }
 
         // vsync can only be off if unlimited fps are on
@@ -86,7 +118,9 @@ class AimingProApp {
         /* once preload is done run game screen */
         if (this.windows.game === null) {
             this.windows.game = new GameWindow(
-                container.get<ClientSettingsAPI<DatabaseSchema>>(ServiceTypes.ClientSettingsAPI),
+                container.get<ClientSettingsAPI<DatabaseSchema>>(
+                    ServiceTypes.ClientSettingsAPI
+                ),
                 container.get<APDiscord>(ServiceTypes.APDiscord)
             );
         }
@@ -95,25 +129,24 @@ class AimingProApp {
         this.protocolHandler(process.argv);
 
         // Get rid off splash screen
-        this.windows.splash.destroy()
+        this.windows.splash.destroy();
         this.windows.splash = null;
     }
 
     private initEvents() {
-
         /* if a second instance is created, focus on the game window */
         app.on("second-instance", (e, commandLine) => {
             // Someone tried to run a second instance, we should focus our window.
             if (this.windows.game) {
                 // Focus on main window if second instance is attempted
-                if (this.windows.game.getBrowserWindow().isMinimized()) this.windows.game.getBrowserWindow().restore();
+                if (this.windows.game.getBrowserWindow().isMinimized())
+                    this.windows.game.getBrowserWindow().restore();
                 this.windows.game.getBrowserWindow().focus();
             }
 
             this.protocolHandler(commandLine);
         });
 
-        
         /* once all elements in splash screen are loaded open game screen and close splash screen */
         ipcMain.once("preload-finished", () => {
             this.startGameWindow();
@@ -157,21 +190,29 @@ class AimingProApp {
         if (this.windows.game == null) {
             ipcMain.once("gamewindow-ready", () => {
                 // If there are any args check if the action is game and emit the load game event
-                if (prot && prot.action === "game") this.windows.game.loadGame(+prot.parameter);
-                if (prot && prot.action === "playlist") this.windows.game.loadPlaylist(+prot.parameter);
+                if (prot && prot.action === "game")
+                    this.windows.game.loadGame(+prot.parameter);
+                if (prot && prot.action === "playlist")
+                    this.windows.game.loadPlaylist(+prot.parameter);
             });
         } else {
             // If there are any args check if the action is game and emit the load game event
-            if (prot && prot.action === "game") this.windows.game.loadGame(+prot.parameter);
-            if (prot && prot.action === "playlist") this.windows.game.loadPlaylist(+prot.parameter);
+            if (prot && prot.action === "game")
+                this.windows.game.loadGame(+prot.parameter);
+            if (prot && prot.action === "playlist")
+                this.windows.game.loadPlaylist(+prot.parameter);
         }
     }
 }
 
 const gotTheLock: boolean = app.requestSingleInstanceLock();
 
-if(!gotTheLock) {
+if (!gotTheLock) {
     app.quit();
 } else {
-    new AimingProApp( container.get<ClientSettingsAPI<DatabaseSchema>>(ServiceTypes.ClientSettingsAPI) );
+    new AimingProApp(
+        container.get<ClientSettingsAPI<DatabaseSchema>>(
+            ServiceTypes.ClientSettingsAPI
+        )
+    );
 }
