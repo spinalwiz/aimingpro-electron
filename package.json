@@ -21,7 +21,7 @@
         "@types/discord-rpc": "^3.0.4",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
-        "electron": "^16.0.5",
+        "electron": "^16.0.7",
         "electron-builder": "^22.14.5",
         "eslint": "^7.18.0",
         "prettier": "^2.2.1",
