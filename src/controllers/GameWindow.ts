@@ -144,11 +144,6 @@ export class GameWindow implements APBrowserWindow {
             app.quit();
         });
 
-        this.browserWindow.webContents.on("new-window", (e, url) => {
-            e.preventDefault();
-            shell.openExternal(url);
-        });
-
         ipcMain.on("clear-cache", () => {
             this.browserWindow.webContents.session.clearCache().catch(() => {
                 consoleLogger.warn("Could not clear cache");

@@ -43,6 +43,12 @@ class AimingProApp {
 
         // Open external links in user's main browser
         app.on("web-contents-created", (event, contents) => {
+            function openLinkSafely(url: URL) {
+                if (["https:", "http:", "mailto:"].includes(url.protocol)) {
+                    shell.openExternal(url.toString());
+                }
+            }
+
             contents.on("will-navigate", (event, navigationUrl) => {
                 const parsedUrl = new URL(navigationUrl);
 
@@ -50,14 +56,15 @@ class AimingProApp {
                     !APClientSettings.ALLOWED_ORIGIN.includes(parsedUrl.origin)
                 ) {
                     event.preventDefault();
-                    if (
-                        ["https:", "http:", "mailto:"].includes(
-                            parsedUrl.protocol
-                        )
-                    ) {
-                        shell.openExternal(navigationUrl);
-                    }
+                    openLinkSafely(parsedUrl);
                 }
+            });
+
+            contents.setWindowOpenHandler(({ url }) => {
+                openLinkSafely(new URL(url));
+                return {
+                    action: "deny",
+                };
             });
         });
 
