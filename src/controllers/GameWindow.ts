@@ -5,7 +5,6 @@ import {
     ipcMain,
     Menu,
     session,
-    shell,
 } from "electron";
 import * as path from "path";
 import { createMainDropDownMenu } from "../schemas";
@@ -66,16 +65,32 @@ export class GameWindow implements APBrowserWindow {
 
         console.log(this.browserWindow.webContents.getUserAgent());
 
-        this.browserWindow
-            .loadURL(APClientSettings.baseUrl)
-            .catch(consoleLogger.critical);
-
         // load maximzed
         this.browserWindow.maximize();
 
         this.initMenu();
         this.initShortcuts();
         this.initEvents();
+
+        /**
+         * Loading a blank page is a workaround to fix renderer being white when the page is loaded
+         * while maximising on newer versions of Electron
+         * https://github.com/electron/electron/issues/32337
+         *
+         * There are various possibly related issues on github with no conclusions/resolutions
+         * available right now
+         * https://github.com/electron/electron/issues/32440
+         * https://github.com/electron/electron/issues/30966
+         * https://github.com/electron/electron/issues/32317
+         */
+        this.browserWindow
+            .loadFile(path.join(__dirname, "../views/blank.html"))
+            .then(() => {
+                this.browserWindow
+                    .loadURL(APClientSettings.baseUrl)
+                    .catch(consoleLogger.critical);
+            })
+            .catch(consoleLogger.critical);
     }
 
     // Check if user is logged in by looking for specific cookies
