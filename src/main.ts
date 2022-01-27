@@ -93,7 +93,7 @@ class AimingProApp {
         /* D3D11 Experimental Features. Mostly for CPU rendering.*/
         if (settings.d3d11) {
             /* Experimental Optimizations */
-            // app.commandLine.appendSwitch("use-angle", "d3d9");
+            app.commandLine.appendSwitch("use-angle", "d3d9");
             app.commandLine.appendSwitch("enable-webgl2-compute-context");
             app.commandLine.appendSwitch("renderer-process-limit", "100");
             app.commandLine.appendSwitch("max-active-webgl-contexts", "100");
