@@ -12,7 +12,7 @@
         "start-nondev": "npm run build && electron ./dist/main.js",
         "pack": "npm run build && electron-builder --dir",
         "dist": "npm run build && electron-builder -mwl",
-        "publish": "npm run build && electron-builder -mwl -p 'always'"
+        "publish": "npm run build && electron-builder -mwl -p always"
     },
     "keywords": [],
     "author": "Insight Aiming Ltd.",
