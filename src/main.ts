@@ -60,12 +60,20 @@ class AimingProApp {
                 }
             });
 
-            contents.setWindowOpenHandler(({ url }) => {
-                openLinkSafely(new URL(url));
-                return {
-                    action: "deny",
-                };
+            // Electron v11
+            contents.on("new-window", (event, url) => {
+                const parsedUrl = new URL(url);
+                event.preventDefault();
+                openLinkSafely(parsedUrl);
             });
+
+            // Electron v12+
+            // contents.setWindowOpenHandler(({ url }) => {
+            //     openLinkSafely(new URL(url));
+            //     return {
+            //         action: "deny",
+            //     };
+            // });
         });
 
         this.handleSwitches();

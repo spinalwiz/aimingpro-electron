@@ -12,6 +12,7 @@
         "start-nondev": "npm run build && electron ./dist/main.js",
         "pack": "npm run build && electron-builder --dir",
         "dist": "npm run build && electron-builder -mwl",
+        "dist-mac": "npm run build && electron-builder -ml --x64 --arm64",
         "publish": "npm run build && electron-builder -mwl -p always"
     },
     "keywords": [],
@@ -31,7 +32,7 @@
         "discord-rpc": "^3.1.4",
         "electron-is-dev": "^1.2.0",
         "electron-store": "^8.0.1",
-        "electron-updater": "^4.6.1",
+        "electron-updater": "4.3.9",
         "inversify": "^5.0.5",
         "reflect-metadata": "^0.1.13",
         "register-scheme": "github:devsnek/node-register-scheme",
