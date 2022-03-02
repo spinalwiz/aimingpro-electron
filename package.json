@@ -1,6 +1,6 @@
 {
     "name": "aimingpro-client",
-    "version": "v1.0.1",
+    "version": "v1.0.2",
     "description": "Aiming.Pro Desktop App",
     "main": "dist/main.js",
     "scripts": {
@@ -21,7 +21,7 @@
         "@types/discord-rpc": "^3.0.4",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
-        "electron": "^16.0.7",
+        "electron": "^11.5.0",
         "electron-builder": "^22.14.12",
         "eslint": "^7.18.0",
         "prettier": "^2.2.1",

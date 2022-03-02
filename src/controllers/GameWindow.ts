@@ -73,6 +73,7 @@ export class GameWindow implements APBrowserWindow {
         this.initEvents();
 
         /**
+         * [[On Electron versions 12+]]
          * Loading a blank page is a workaround to fix renderer being white when the page is loaded
          * while maximising on newer versions of Electron
          * https://github.com/electron/electron/issues/32337
@@ -83,14 +84,14 @@ export class GameWindow implements APBrowserWindow {
          * https://github.com/electron/electron/issues/30966
          * https://github.com/electron/electron/issues/32317
          */
+        // this.browserWindow
+        //     .loadFile(path.join(__dirname, "../views/blank.html"))
+        //     .then(() => {
         this.browserWindow
-            .loadFile(path.join(__dirname, "../views/blank.html"))
-            .then(() => {
-                this.browserWindow
-                    .loadURL(APClientSettings.baseUrl)
-                    .catch(consoleLogger.critical);
-            })
+            .loadURL(APClientSettings.baseUrl)
             .catch(consoleLogger.critical);
+        // })
+        // .catch(consoleLogger.critical);
     }
 
     // Check if user is logged in by looking for specific cookies
