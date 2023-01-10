@@ -1,10 +1,11 @@
 {
     "name": "aimingpro-client",
-    "version": "v1.0.3",
+    "version": "v1.0.4",
     "description": "Aiming.Pro Desktop App",
     "main": "dist/main.js",
     "scripts": {
-        "build": "tsc",
+        "build": "npm run build-preload && tsc",
+        "build-preload": "esbuild src/game-preload.ts --platform=node --external:electron --bundle --outfile=dist/game-preload.js",
         "watch": "tsc -w",
         "lint": "eslint -c .eslintrc.json ./src",
         "pretty": "prettier --write \"./**/*.{ts,json}\"",
@@ -13,7 +14,7 @@
         "pack": "npm run build && electron-builder --dir",
         "dist": "npm run build && electron-builder -mwl",
         "dist-mac": "npm run build && electron-builder -ml --x64 --arm64",
-        "publish": "npm run build && electron-builder -mwl -p always"
+        "publish": "npm run build && electron-builder -ml --x64 --arm64 -p always"
     },
     "keywords": [],
     "author": "Insight Aiming Ltd.",
@@ -22,17 +23,19 @@
         "@types/discord-rpc": "^3.0.4",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
-        "electron": "^11.5.0",
-        "electron-builder": "^22.14.12",
+        "electron": "^22.0.0",
+        "electron-builder": "^23.6.0",
+        "electron-notarize": "^1.2.2",
+        "esbuild": "^0.15.18",
         "eslint": "^7.18.0",
         "prettier": "^2.2.1",
         "typescript": "^4.1.3"
     },
     "dependencies": {
         "discord-rpc": "^3.1.4",
-        "electron-is-dev": "^1.2.0",
-        "electron-store": "^8.0.1",
-        "electron-updater": "4.3.9",
+        "electron-is-dev": "^2.0.0",
+        "electron-store": "^8.1.0",
+        "electron-updater": "5.3.0",
         "inversify": "^5.0.5",
         "reflect-metadata": "^0.1.13",
         "register-scheme": "github:devsnek/node-register-scheme",
@@ -82,11 +85,14 @@
         },
         "mac": {
             "category": "public.app-category.games",
+            "hardenedRuntime": true,
+            "entitlements": "./dist/entitlements.mac.inherit.plist",
             "target": [
                 "dmg",
                 "zip"
             ]
         },
+        "afterSign": "./scripts/afterSign.js",
         "portable": {
             "artifactName": "Official Aiming.pro Desktop Client"
         },

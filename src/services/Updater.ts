@@ -30,7 +30,7 @@ export class Updater {
         });
 
         // Show error message and load old app
-        autoUpdater.on("error", (err: AutoUpdater) => {
+        autoUpdater.on("error", (err: Error) => {
             console.log(err);
             ipcMain.emit("loadingscreen-status", "An Error has Occured!");
             setTimeout(() => ipcMain.emit("update-finished"), 2500);

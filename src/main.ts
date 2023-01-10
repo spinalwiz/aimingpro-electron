@@ -60,20 +60,12 @@ class AimingProApp {
                 }
             });
 
-            // Electron v11
-            contents.on("new-window", (event, url) => {
-                const parsedUrl = new URL(url);
-                event.preventDefault();
-                openLinkSafely(parsedUrl);
+            contents.setWindowOpenHandler(({ url }) => {
+                openLinkSafely(new URL(url));
+                return {
+                    action: "deny",
+                };
             });
-
-            // Electron v12+
-            // contents.setWindowOpenHandler(({ url }) => {
-            //     openLinkSafely(new URL(url));
-            //     return {
-            //         action: "deny",
-            //     };
-            // });
         });
 
         this.handleSwitches();
@@ -113,10 +105,6 @@ class AimingProApp {
             app.commandLine.appendSwitch("renderer-process-limit", "100");
             app.commandLine.appendSwitch("max-active-webgl-contexts", "100");
         }
-
-        // Electron v11
-        // Enable unadjustedMovement (raw mouse input) for pointer lock
-        app.commandLine.appendSwitch("enable-features", "PointerLockOptions");
     }
 
     /**
