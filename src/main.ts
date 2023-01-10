@@ -60,7 +60,6 @@ class AimingProApp {
                 }
             });
 
-
             contents.setWindowOpenHandler(({ url }) => {
                 openLinkSafely(new URL(url));
                 return {
@@ -105,7 +104,7 @@ class AimingProApp {
             app.commandLine.appendSwitch("enable-webgl2-compute-context");
             app.commandLine.appendSwitch("renderer-process-limit", "100");
             app.commandLine.appendSwitch("max-active-webgl-contexts", "100");
-        }1
+        }
     }
 
     /**
