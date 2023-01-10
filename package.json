@@ -1,6 +1,6 @@
 {
     "name": "aimingpro-client",
-    "version": "v1.0.3",
+    "version": "v1.0.4",
     "description": "Aiming.Pro Desktop App",
     "main": "dist/main.js",
     "scripts": {
@@ -14,7 +14,7 @@
         "pack": "npm run build && electron-builder --dir",
         "dist": "npm run build && electron-builder -mwl",
         "dist-mac": "npm run build && electron-builder -ml --x64 --arm64",
-        "publish": "npm run build && electron-builder -mwl -p always"
+        "publish": "npm run build && electron-builder -ml --x64 --arm64 -p always"
     },
     "keywords": [],
     "author": "Insight Aiming Ltd.",
@@ -25,6 +25,7 @@
         "@typescript-eslint/parser": "^4.14.1",
         "electron": "^22.0.0",
         "electron-builder": "^23.6.0",
+        "electron-notarize": "^1.2.2",
         "esbuild": "^0.15.18",
         "eslint": "^7.18.0",
         "prettier": "^2.2.1",
@@ -84,11 +85,14 @@
         },
         "mac": {
             "category": "public.app-category.games",
+            "hardenedRuntime": true,
+            "entitlements": "./dist/entitlements.mac.inherit.plist",
             "target": [
                 "dmg",
                 "zip"
             ]
         },
+        "afterSign": "./scripts/afterSign.js",
         "portable": {
             "artifactName": "Official Aiming.pro Desktop Client"
         },
