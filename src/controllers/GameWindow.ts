@@ -35,8 +35,9 @@ export class GameWindow implements APBrowserWindow {
             titleBarStyle: "default",
             webPreferences: {
                 preload: path.join(__dirname, "../../dist/game-preload.js"),
-                contextIsolation: false,
+                contextIsolation: true,
                 nodeIntegration: false,
+                sandbox: false,
             },
         };
 

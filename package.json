@@ -1,6 +1,6 @@
 {
     "name": "aimingpro-client",
-    "version": "v1.0.4",
+    "version": "v1.0.6",
     "description": "Aiming.Pro Desktop App",
     "main": "dist/main.js",
     "scripts": {
